@@ -1,0 +1,41 @@
+{
+  "name": "serverless-finch",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=4.0"
+  },
+  "description": "Deploy your serverless static website to AWS S3.",
+  "main": "index.js",
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fernando-mc/serverless-finch.git"
+  },
+  "keywords": [
+    "serverless",
+    "serverless plugins",
+    "lambda",
+    "aws",
+    "aws lambda",
+    "amazon",
+    "amazon web services",
+    "s3",
+    "website",
+    "frontend",
+    "serverless.com"
+  ],
+  "author": "Fernando Medina Corey",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fernando-mc/serverless-finch/issues"
+  },
+  "homepage": "https://github.com/fernando-mc/serverless-finch#readme",
+  "dependencies": {
+    "async": "^1.5.2",
+    "bluebird": "^3.0.6",
+    "lodash": "^4.2.1",
+    "mime": "^1.2.11"
+  }
+}
