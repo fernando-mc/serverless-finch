@@ -167,6 +167,52 @@ class Client {
       return this.aws.request('S3', 'putBucketPolicy', params, this.stage, this.region);
     }
 
+    function configureCorsForBucket(){
+      this.serverless.cli.log(`Configuring CORS policy for bucket ${this.bucketName}...`);
+
+      let putPostDeleteRule = {
+        AllowedMethods: [
+          'PUT',
+          'POST',
+          'DELETE'
+        ],
+        AllowedOrigins: [
+          'https://*.amazonaws.com'
+        ],
+        AllowedHeaders: [
+          '*'
+        ],
+        MaxAgeSeconds: 0
+      }
+
+      let getRule = {
+        AllowedMethods: [
+          'GET'
+        ],
+        AllowedOrigins: [
+          '*'
+        ],
+        AllowedHeaders: [
+          '*'
+        ],
+        MaxAgeSeconds: 0
+      }
+
+      let CorsConfig = 
+
+      let params = {
+        Bucket: this.bucketName,
+        CORSConfiguration: {
+          CORSRules: [
+            putPostDeleteRule,
+            getRule
+          ]
+        },
+      };
+
+      return this.aws.request('S3', 'putBucketCors', params, this.stage, this.region);
+    }
+
     return this.aws.request('S3', 'listBuckets', {}, this.stage, this.region)
       .bind(this)
       .then(listBuckets)
@@ -175,6 +221,7 @@ class Client {
       .then(createBucket)
       .then(configureBucket)
       .then(configurePolicyForBucket)
+      .then(configureCorsForBucket)
       .then(function(){
         return this._uploadDirectory(this.clientPath)
       });
