@@ -183,7 +183,7 @@ class Client {
           '*'
         ],
         MaxAgeSeconds: 0
-      }
+      };
 
       let getRule = {
         AllowedMethods: [
@@ -196,9 +196,7 @@ class Client {
           '*'
         ],
         MaxAgeSeconds: 0
-      }
-
-      let CorsConfig = 
+      };
 
       let params = {
         Bucket: this.bucketName,
