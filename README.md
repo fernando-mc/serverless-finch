@@ -23,7 +23,7 @@ plugins:
 
 custom:
   client:
-  bucketName: unique-s3-bucketname-for-your-website-files
+    bucketName: unique-s3-bucketname-for-your-website-files
 ```
 
 * **Warning:** The plugin will overwrite any data you have in the bucket name you set above if it already exists.
