@@ -250,7 +250,7 @@ class Client {
         fileKey    = filePath.replace(_this.clientPath, '').substr(1).replace(/\\/g, '/');
 
     this.serverless.cli.log(`Uploading file ${fileKey} to bucket ${_this.bucketName}...`);
-    this.serverless.cli.log(`If successful this should be deployed at: https://s3.amazonaws.com/${_this.bucketName}/${fileKey}`)
+    this.serverless.cli.log(`If successful this should be deployed at: https://s3-${_this.region}.amazonaws.com/${_this.bucketName}/${fileKey}`)
 
     fs.readFile(filePath, function(err, fileBuffer) {
 
