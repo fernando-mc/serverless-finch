@@ -31,7 +31,7 @@ class Client {
             ],
             options: {
               file: {
-                usage: 'Specify the file to deploy',
+                usage: 'Specify the file(s) to deploy, whitespace separated',
                 shortcut: 'f',
                 default: undefined
               }
@@ -219,16 +219,25 @@ class Client {
 
       return this.aws.request('S3', 'putBucketCors', params, this.stage, this.region);
     }
-    if(this.options.file)
+    if(this.options.file){
+      var list = '' + this.options.file
+      console.log(list)
+      var arr=list.split(/\s+/).filter((str)=>{return str!==''})
+      if(arr.length===0)
+        return console.log("Nothing to upload!")
       return this.aws.request('S3', 'listBuckets', {}, this.stage, this.region)
       .bind(this)
       .then(listBuckets)
       .then(listObjectsInBucket)
+      .then(createBucket)
+      .then(configureBucket)
+      .then(configurePolicyForBucket)
+      .then(configureCorsForBucket)
       .then(function(){
-        var arr=this.options.file.split(/\s+/)
+        console.log(arr)
         return this._uploadFiles(arr,this.clientPath)
       });
-    else
+    }else{
       return this.aws.request('S3', 'listBuckets', {}, this.stage, this.region)
       .bind(this)
       .then(listBuckets)
@@ -241,6 +250,7 @@ class Client {
       .then(function(){
           return this._uploadDirectory(this.clientPath)
       });
+    }
   }
 
   _uploadFiles(fileNames, directoryPath) {
@@ -251,7 +261,6 @@ class Client {
       files = _.map(fileNames, function(file) {
         return path.join(directoryPath, file);
       });
-      console.log(files)
 
       async.each(files, function(path) {
         fs.stat(path, _.bind(function (err, stats) {
@@ -288,7 +297,6 @@ class Client {
   }
 
   _uploadFile(filePath) {
-    console.log(filePath)
     let _this      = this,
         fileKey    = filePath.replace(_this.clientPath, '').substr(1).replace(/\\/g, '/');
 
