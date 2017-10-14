@@ -10,6 +10,7 @@ const fs           = require('fs');
 class Client {
   constructor(serverless, options){
     this.serverless = serverless;
+    this.options=options;
     this.stage = options.stage || _.get(serverless, 'service.provider.stage')
     this.region = options.region || _.get(serverless, 'service.provider.region');
     this.provider = 'aws';
@@ -27,11 +28,19 @@ class Client {
             usage: 'Deploy serverless client code',
             lifecycleEvents:[
               'deploy'
-            ]
+            ],
+            options: {
+              file: {
+                usage: 'Specify the file to deploy',
+                shortcut: 'f',
+                default: undefined
+              }
+            }
           }
         }
       }
     };
+
 
 
     this.hooks = {
@@ -210,8 +219,17 @@ class Client {
 
       return this.aws.request('S3', 'putBucketCors', params, this.stage, this.region);
     }
-
-    return this.aws.request('S3', 'listBuckets', {}, this.stage, this.region)
+    if(this.options.file)
+      return this.aws.request('S3', 'listBuckets', {}, this.stage, this.region)
+      .bind(this)
+      .then(listBuckets)
+      .then(listObjectsInBucket)
+      .then(function(){
+        var arr=this.options.file.split(/\s+/)
+        return this._uploadFiles(arr,this.clientPath)
+      });
+    else
+      return this.aws.request('S3', 'listBuckets', {}, this.stage, this.region)
       .bind(this)
       .then(listBuckets)
       .then(listObjectsInBucket)
@@ -221,8 +239,32 @@ class Client {
       .then(configurePolicyForBucket)
       .then(configureCorsForBucket)
       .then(function(){
-        return this._uploadDirectory(this.clientPath)
+          return this._uploadDirectory(this.clientPath)
       });
+  }
+
+  _uploadFiles(fileNames, directoryPath) {
+    let _this         = this,
+    readDirectory = _.partial(fs.readdir, directoryPath);
+
+    async.waterfall([readDirectory, function (files) {
+      files = _.map(fileNames, function(file) {
+        return path.join(directoryPath, file);
+      });
+      console.log(files)
+
+      async.each(files, function(path) {
+        fs.stat(path, _.bind(function (err, stats) {
+          if(err){
+            console.log(err)
+            return
+          }
+          return stats.isDirectory()
+            ? _this._uploadDirectory(path)
+            : _this._uploadFile(path);
+        }, _this));
+      });
+    }]);
   }
 
   _uploadDirectory(directoryPath) {
@@ -246,6 +288,7 @@ class Client {
   }
 
   _uploadFile(filePath) {
+    console.log(filePath)
     let _this      = this,
         fileKey    = filePath.replace(_this.clientPath, '').substr(1).replace(/\\/g, '/');
 
