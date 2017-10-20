@@ -65,7 +65,7 @@ class Client {
     data.Buckets.forEach(function(bucket) {
       if (bucket.Name === this.bucketName) {
         this.bucketExists = true;
-        this.serverless.cli.log(`Bucket ${this.bucketName} already exists`);
+        this.serverless.cli.log(`Bucket ${this.bucketName} exists`);
       }
     }.bind(this));
   }
