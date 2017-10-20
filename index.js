@@ -57,7 +57,7 @@ class Client {
 
   // Shared functions
 
-  listBuckets(data) {
+  listBuckets() {
     return this.aws.request('S3', 'listBuckets', {}, this.stage, this.region).bind(this);
   }
 
@@ -107,18 +107,19 @@ class Client {
 
   _removeDeployedResources() {
     this.bucketName = this.serverless.service.custom.client.bucketName;
-    this.serverless.cli.log(`Preparing to remove bucket ${this.bucketName}`);
-
-    let params = {
-      Bucket: this.bucketName
-    };
+    var safetyDelay = 3000;
+    this.serverless.cli.log(`Preparing to empty and remove bucket ${this.bucketName}, waiting for ${safetyDelay/1000} seconds...`);
 
     function deleteBucket() {
       this.serverless.cli.log(`Removing bucket ${this.bucketName}...`);
+      let params = {
+        Bucket: this.bucketName
+      };
       return this.aws.request('S3', 'deleteBucket', params, this.stage, this.region);
     }
 
-    return this.listBuckets()
+    return BbPromise.delay(safetyDelay).bind(this)
+      .then(this.listBuckets)
       .then(this.findBucket)
       .then(this.listObjectsInBucket)
       .then(this.deleteObjectsFromBucket)
