@@ -57,6 +57,12 @@ If later on you want to take down the website you can use:
 serverless client remove
 ```
 
+## Release Notes
+
+### v1.2.1 
+- Added the `remove` option to tear down what you deploy. ([Pull 10](https://github.com/fernando-mc/serverless-finch/pull/10) thanks to [redroot](https://github.com/redroot)
+)
+
 ## Contributors
 - [redroot](https://github.com/redroot)
-    - Added the `remove` option to tear down what you deploy. ([Pull 10](https://github.com/fernando-mc/serverless-finch/pull/10))
+    
