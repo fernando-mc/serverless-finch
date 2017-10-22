@@ -49,4 +49,14 @@ echo "error page" >> client/dist/error.html
 serverless client deploy [--stage $STAGE] [--region $REGION]
 ```
 
-**Fifth**, Have fun!
+The plugin should output the location of your newly deployed static site to the console.
+
+If later on you want to take down the website you can use:
+
+```
+serverless client remove
+```
+
+## Contributors
+- [redroot](https://github.com/redroot)
+    - Added the `remove` option to tear down what you deploy. ([Pull 10](https://github.com/fernando-mc/serverless-finch/pull/10))
