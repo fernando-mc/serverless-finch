@@ -28,6 +28,12 @@ class Client {
             lifecycleEvents:[
               'deploy'
             ]
+          },
+          remove: {
+            usage: 'Removes deployed files and bucket',
+            lifecycleEvents: [
+              'remove'
+            ]
           }
         }
       }
@@ -42,8 +48,82 @@ class Client {
       'client:deploy:deploy': () => {
         this._validateAndPrepare()
           .then(this._processDeployment.bind(this));
+      },
+      'client:remove:remove': () => {
+        this._removeDeployedResources();
       }
     };
+  }
+
+  // Shared functions
+
+  listBuckets() {
+    return this.aws.request('S3', 'listBuckets', {}, this.stage, this.region).bind(this);
+  }
+
+  findBucket(data) {
+    data.Buckets.forEach(function(bucket) {
+      if (bucket.Name === this.bucketName) {
+        this.bucketExists = true;
+        this.serverless.cli.log(`Bucket ${this.bucketName} exists`);
+      }
+    }.bind(this));
+  }
+
+  listObjectsInBucket() {
+    if (!this.bucketExists) return BbPromise.resolve();
+
+    this.serverless.cli.log(`Listing objects in bucket ${this.bucketName}...`);
+
+    let params = {
+      Bucket: this.bucketName
+    };
+
+    return this.aws.request('S3', 'listObjectsV2', params, this.stage, this.region);
+  }
+
+  deleteObjectsFromBucket(data) {
+    if (!this.bucketExists) return BbPromise.resolve();
+
+    this.serverless.cli.log(`Deleting all objects from bucket ${this.bucketName}...`);
+
+    if (!data.Contents[0]) {
+      return BbPromise.resolve();
+    } else {
+      let Objects = _.map(data.Contents, function (content) {
+        return _.pick(content, 'Key');
+      });
+
+      let params = {
+        Bucket: this.bucketName,
+        Delete: { Objects: Objects }
+      };
+
+      return this.aws.request('S3', 'deleteObjects', params, this.stage, this.region);
+    }
+  }
+
+  // Hook handlers
+
+  _removeDeployedResources() {
+    this.bucketName = this.serverless.service.custom.client.bucketName;
+    var safetyDelay = 3000;
+    this.serverless.cli.log(`Preparing to empty and remove bucket ${this.bucketName}, waiting for ${safetyDelay/1000} seconds...`);
+
+    function deleteBucket() {
+      this.serverless.cli.log(`Removing bucket ${this.bucketName}...`);
+      let params = {
+        Bucket: this.bucketName
+      };
+      return this.aws.request('S3', 'deleteBucket', params, this.stage, this.region);
+    }
+
+    return BbPromise.delay(safetyDelay).bind(this)
+      .then(this.listBuckets)
+      .then(this.findBucket)
+      .then(this.listObjectsInBucket)
+      .then(this.deleteObjectsFromBucket)
+      .then(deleteBucket)
   }
 
   _validateAndPrepare() {
@@ -71,49 +151,6 @@ class Client {
 
   _processDeployment() {
     this.serverless.cli.log('Deploying client to stage "' + this.stage + '" in region "' + this.region + '"...');
-
-
-    function listBuckets(data) {
-      data.Buckets.forEach(function(bucket) {
-        if (bucket.Name === this.bucketName) {
-          this.bucketExists = true;
-          this.serverless.cli.log(`Bucket ${this.bucketName} already exists`);
-        }
-      }.bind(this));
-    }
-
-    function listObjectsInBucket() {
-      if (!this.bucketExists) return BbPromise.resolve();
-
-      this.serverless.cli.log(`Listing objects in bucket ${this.bucketName}...`);
-
-      let params = {
-        Bucket: this.bucketName
-      };
-
-      return this.aws.request('S3', 'listObjectsV2', params, this.stage, this.region);
-    }
-
-    function deleteObjectsFromBucket(data) {
-      if (!this.bucketExists) return BbPromise.resolve();
-
-      this.serverless.cli.log(`Deleting all objects from bucket ${this.bucketName}...`);
-
-      if (!data.Contents[0]) {
-        return BbPromise.resolve();
-      } else {
-        let Objects = _.map(data.Contents, function (content) {
-          return _.pick(content, 'Key');
-        });
-
-        let params = {
-          Bucket: this.bucketName,
-          Delete: { Objects: Objects }
-        };
-
-        return this.aws.request('S3', 'deleteObjects', params, this.stage, this.region);
-      }
-    }
 
     function createBucket() {
       if (this.bucketExists) return BbPromise.resolve();
@@ -211,11 +248,10 @@ class Client {
       return this.aws.request('S3', 'putBucketCors', params, this.stage, this.region);
     }
 
-    return this.aws.request('S3', 'listBuckets', {}, this.stage, this.region)
-      .bind(this)
-      .then(listBuckets)
-      .then(listObjectsInBucket)
-      .then(deleteObjectsFromBucket)
+    return this.listBuckets()
+      .then(this.findBucket)
+      .then(this.listObjectsInBucket)
+      .then(this.deleteObjectsFromBucket)
       .then(createBucket)
       .then(configureBucket)
       .then(configurePolicyForBucket)
