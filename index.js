@@ -130,10 +130,11 @@ class Client {
     const Utils = this.serverless.utils;
     const Error = this.serverless.classes.Error;
 
-    const _dist = _.get(this.serverless, 'service.custom.client.distributionFolder', 'dist');
-
-    if (!Utils.dirExistsSync(path.join(this.serverless.config.servicePath, 'client', _dist))) {
-      return BbPromise.reject(new Error('Could not find "client/' + _dist + ' folder in your project root.'));
+    const distributionFolder = _.get(this.serverless, 'service.custom.client.distributionFolder', path.join('client', 'dist'));
+    const clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
+    
+    if (!Utils.dirExistsSync(clientPath)) {
+      return BbPromise.reject(new Error('Could not find ' + clientPath + ' folder in your project root.'));
     }
 
     if (!this.serverless.service.custom ||
@@ -143,7 +144,7 @@ class Client {
     }
 
     this.bucketName = this.serverless.service.custom.client.bucketName;
-    this.clientPath = path.join(this.serverless.config.servicePath, 'client', _dist);
+    this.clientPath = clientPath;
 
     return BbPromise.resolve();
   }

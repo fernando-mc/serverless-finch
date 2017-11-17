@@ -24,6 +24,7 @@ plugins:
 custom:
   client:
     bucketName: unique-s3-bucketname-for-your-website-files
+    distributionFolder: client/dist
 ```
 
 * **Warning:** The plugin will overwrite any data you have in the bucket name you set above if it already exists.
