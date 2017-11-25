@@ -307,7 +307,6 @@ class Client {
 
     this.serverless.cli.log(`Uploading file ${fileKey} to bucket ${_this.bucketName}...`);
     this.serverless.cli.log('If successful this should be deployed at:')
-    this.serverless.cli.log(`https://${urlRoot}/${_this.bucketName}/${fileKey}`)
     this.serverless.cli.log(`http://${_this.bucketName}.${urlRoot}/${fileKey}`)
 
     fs.readFile(filePath, function(err, fileBuffer) {
