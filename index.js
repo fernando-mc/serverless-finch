@@ -7,6 +7,24 @@ const _            = require('lodash');
 const mime         = require('mime');
 const fs           = require('fs');
 
+// per http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints
+const regionToUrlRootMap = region => ({
+  'us-east-2': 's3-website.us-east-2.amazonaws.com',
+  'us-east-1': 's3-website-us-east-1.amazonaws.com',
+  'us-west-1': 's3-website-us-west-1.amazonaws.com',
+  'us-west-2': 's3-website-us-west-2.amazonaws.com',
+  'ca-central-1': 's3-website.ca-central-1.amazonaws.com',
+  'ap-south-1': 's3-website.ap-south-1.amazonaws.com',
+  'ap-northeast-2': 's3-website.ap-northeast-2.amazonaws.com',
+  'ap-southeast-1': 's3-website-ap-southeast-1.amazonaws.com',
+  'ap-southeast-2': 's3-website-ap-southeast-2.amazonaws.com',
+  'ap-northeast-1': 's3-website-ap-northeast-1.amazonaws.com',
+  'eu-central-1': 's3-website.eu-central-1.amazonaws.com',
+  'eu-west-1': 's3-website-eu-west-1.amazonaws.com',
+  'eu-west-2': 's3-website.eu-west-2.amazonaws.com',
+  'sa-east-1': 's3-website-sa-east-1.amazonaws.com',
+}[region])
+
 class Client {
   constructor(serverless, options){
     this.serverless = serverless;
@@ -284,10 +302,13 @@ class Client {
 
   _uploadFile(filePath) {
     let _this      = this,
-        fileKey    = filePath.replace(_this.clientPath, '').substr(1).replace(/\\/g, '/');
+        fileKey    = filePath.replace(_this.clientPath, '').substr(1).replace(/\\/g, '/'),
+        urlRoot    = regionToUrlRootMap(_this.region);
 
     this.serverless.cli.log(`Uploading file ${fileKey} to bucket ${_this.bucketName}...`);
-    this.serverless.cli.log(`If successful this should be deployed at: https://s3.amazonaws.com/${_this.bucketName}/${fileKey}`)
+    this.serverless.cli.log('If successful this should be deployed at:')
+    this.serverless.cli.log(`https://${urlRoot}/${_this.bucketName}/${fileKey}`)
+    this.serverless.cli.log(`http://${_this.bucketName}.${urlRoot}/${fileKey}`)
 
     fs.readFile(filePath, function(err, fileBuffer) {
 
