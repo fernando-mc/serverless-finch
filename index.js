@@ -22,6 +22,7 @@ const regionToUrlRootMap = region => ({
   'eu-central-1': 's3-website.eu-central-1.amazonaws.com',
   'eu-west-1': 's3-website-eu-west-1.amazonaws.com',
   'eu-west-2': 's3-website.eu-west-2.amazonaws.com',
+  'eu-west-3': 's3-website.eu-west-3.amazonaws.com',
   'sa-east-1': 's3-website-sa-east-1.amazonaws.com',
 }[region])
 
