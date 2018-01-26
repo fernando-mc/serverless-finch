@@ -29,8 +29,6 @@ const regionToUrlRootMap = region => ({
 class Client {
   constructor(serverless, options){
     this.serverless = serverless;
-    this.stage = options.stage || _.get(serverless, 'service.provider.stage')
-    this.region = options.region || _.get(serverless, 'service.provider.region');
     this.provider = 'aws';
     this.aws = this.serverless.getProvider(this.provider);
 
@@ -65,6 +63,8 @@ class Client {
       },
 
       'client:deploy:deploy': () => {
+        this.stage = options.stage || _.get(serverless, 'service.provider.stage')
+        this.region = options.region || _.get(serverless, 'service.provider.region');
         this._validateAndPrepare()
           .then(this._processDeployment.bind(this));
       },
