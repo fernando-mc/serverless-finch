@@ -24,7 +24,7 @@ custom:
     distributionFolder: client/dist # (Optional) The location of your website. This defaults to client/dist
     indexDocument: index.html # (Optional) The location of your index document. Defaults to index.html
     errorDocument: error.html # (Optional) The location of your error document. Defaults to error.html
-    spa: false # (Optional) Set this to true to redirect all errors to the index document
+    spa: false # (Optional) Set this for single-page applications to redirect all errors to the index document
 ```
 
 * **Warning:** The plugin will overwrite any data you have in the bucket name you set above if it already exists.
