@@ -22,9 +22,14 @@ custom:
   client:
     bucketName: unique-s3-bucketname-for-your-website-files
     distributionFolder: client/dist # (Optional) The location of your website. This defaults to client/dist
+    indexDocument: index.html # (Optional) The location of your index document. Defaults to index.html
+    errorDocument: error.html # (Optional) The location of your error document. Defaults to error.html
+    spa: false # (Optional) Set this to true to redirect all errors to the index document
 ```
 
 * **Warning:** The plugin will overwrite any data you have in the bucket name you set above if it already exists.
+
+* **Warning:** If the 'spa' option is set, the errorDocument setting will be ignored.
 
 
 **Third**, Create a website folder in the root directory of your Serverless project. This is where your distribution-ready website should live. By default the plugin expects the files to live in a folder called `client/dist`. But this is configurable with the `distributionFolder` option (see the example yaml configuration above).
@@ -76,5 +81,6 @@ serverless client remove
 - [amsross](https://github.com/amsross)
 - [pradel](https://github.com/pradel)
 - [daguix](https://github.com/daguix)
+- [evanseeds](https://github.com/evanseeds)
 
 Forked from the [**serverless-client-s3**](https://github.com/serverless/serverless-client-s3/)

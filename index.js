@@ -186,11 +186,19 @@ class Client {
     function configureBucket() {
       this.serverless.cli.log(`Configuring website bucket ${this.bucketName}...`);
 
+      let indexDoc, errorDoc;
+      if (this.serverless.service.custom.spa) {
+        indexDoc = errorDoc = this.serverless.service.custom.client.indexDocument || 'index.html'
+      } else {
+        indexdoc = this.serverless.service.custom.client.indexDocument || 'index.html'
+        errorDoc = this.serverless.service.custom.client.errorDocument || 'error.html'
+      }
+
       let params = {
         Bucket: this.bucketName,
         WebsiteConfiguration: {
-          IndexDocument: { Suffix: 'index.html' },
-          ErrorDocument: { Key: 'error.html' }
+          IndexDocument: { Suffix: indexDoc },
+          ErrorDocument: { Key: errorDoc }
         }
       };
 
