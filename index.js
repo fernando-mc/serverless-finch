@@ -102,7 +102,7 @@ class Client {
   }
 
   deleteObjectsFromBucket(data) {
-    if (!this.bucketExists) return BbPromise.resolve();
+    if (!this.bucketExists || this.keepFiles) return BbPromise.resolve();
 
     this.serverless.cli.log(`Deleting all objects from bucket ${this.bucketName}...`);
 
@@ -163,6 +163,7 @@ class Client {
     }
 
     this.bucketName = this.serverless.service.custom.client.bucketName;
+    this.keepFiles = this.serverless.service.custom.client.keepFiles;
     this.clientPath = clientPath;
 
     return BbPromise.resolve();
