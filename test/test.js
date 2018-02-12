@@ -12,13 +12,11 @@ describe('Client', () => {
     pluginInstance = new FinchClient(serverless);
     pluginInstance.serverless.service.service = 'new-service';
     pluginInstance.serverless.provider = 'aws';
-    pluginInstance.constructor()
   });
 
   describe('#constructor()', () => {
     it('should set the provider variable to "aws"', () =>
-      expect(
-        ServerlessFinch.provider
-      ).to.equal('aws'));
+        assert.deepEqual(pluginInstance.provider, 'aws')
+    );
   });
 })
