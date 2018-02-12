@@ -57,15 +57,16 @@ serverless client remove
 
 ## Release Notes
 
-### v1.2.*
-- Added the `remove` option to tear down what you deploy. ([Pull 10](https://github.com/fernando-mc/serverless-finch/pull/10) thanks to [redroot](https://github.com/redroot)) 
-- Fixed automated builds for the project (no functional differences)
-
 ### v1.3.*
 - Added the ability to set a `distributionFolder` configuration value. This enables you to upload your website files from a custom directory ([Pull 12](https://github.com/fernando-mc/serverless-finch/pull/12) - [pradel](https://github.com/pradel))
 - Updated the URL to the official static website endpoint URL ([Pull 13](https://github.com/fernando-mc/serverless-finch/pull/13) - [amsross](https://github.com/amsross))
 - Minor fixes to prs ([fernando-mc](https://github.com/fernando-mc))
 - Added a new AWS region ([daguix](https://github.com/daguix))
+- Fixed an issue with resolving serverless variables ([shentonfreude](https://github.com/shentonfreude))
+
+### v1.2.*
+- Added the `remove` option to tear down what you deploy. ([Pull 10](https://github.com/fernando-mc/serverless-finch/pull/10) thanks to [redroot](https://github.com/redroot)) 
+- Fixed automated builds for the project (no functional differences)
 
 ## Maintainers
 - **You** - If you're interested in having a more active role in development and becoming a maintainer [get in touch](https://www.fernandomc.com/contact/).
@@ -76,5 +77,6 @@ serverless client remove
 - [amsross](https://github.com/amsross)
 - [pradel](https://github.com/pradel)
 - [daguix](https://github.com/daguix)
+- [shentonfreude](https://github.com/shentonfreude)
 
 Forked from the [**serverless-client-s3**](https://github.com/serverless/serverless-client-s3/)
