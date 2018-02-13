@@ -24,12 +24,9 @@ custom:
     distributionFolder: client/dist # (Optional) The location of your website. This defaults to client/dist
     indexDocument: index.html # (Optional) The location of your index document. Defaults to index.html
     errorDocument: error.html # (Optional) The location of your error document. Defaults to error.html
-    spa: false # (Optional) Set this for single-page applications to redirect all errors to the index document
 ```
 
 * **Warning:** The plugin will overwrite any data you have in the bucket name you set above if it already exists.
-
-* **Warning:** If the 'spa' option is set, the errorDocument setting will be ignored.
 
 
 **Third**, Create a website folder in the root directory of your Serverless project. This is where your distribution-ready website should live. By default the plugin expects the files to live in a folder called `client/dist`. But this is configurable with the `distributionFolder` option (see the example yaml configuration above).
