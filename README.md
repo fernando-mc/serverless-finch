@@ -22,6 +22,8 @@ custom:
   client:
     bucketName: unique-s3-bucketname-for-your-website-files
     distributionFolder: client/dist # (Optional) The location of your website. This defaults to client/dist
+    indexDocument: index.html # (Optional) The name of your index document inside your distributionFolder. Defaults to index.html
+    errorDocument: error.html # (Optional) The name of your error document inside your distributionFolder. Defaults to error.html
 ```
 
 * **Warning:** The plugin will overwrite any data you have in the bucket name you set above if it already exists.
@@ -78,5 +80,6 @@ serverless client remove
 - [pradel](https://github.com/pradel)
 - [daguix](https://github.com/daguix)
 - [shentonfreude](https://github.com/shentonfreude)
+- [evanseeds](https://github.com/evanseeds)
 
 Forked from the [**serverless-client-s3**](https://github.com/serverless/serverless-client-s3/)
