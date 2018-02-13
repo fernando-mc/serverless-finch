@@ -26,7 +26,7 @@ custom:
     errorDocument: error.html # (Optional) The name of your error document inside your distributionFolder. Defaults to error.html
 ```
 
-* **Warning:** The plugin will overwrite any data you have in the bucket name you set above if it already exists.
+* **Warning:** The plugin will overwrite any data you have in the bucket name you set above if it already exists unless you specify `"keepFiles": "true"` in custom.client.
 
 
 **Third**, Create a website folder in the root directory of your Serverless project. This is where your distribution-ready website should live. By default the plugin expects the files to live in a folder called `client/dist`. But this is configurable with the `distributionFolder` option (see the example yaml configuration above).
