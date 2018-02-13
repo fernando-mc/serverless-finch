@@ -46,6 +46,12 @@ class Client {
               'deploy'
             ]
           },
+          config: {
+            usage: 'Configure client by executing config script.',
+            lifecycleEvents:[
+              'config'
+            ]
+          },
           remove: {
             usage: 'Removes deployed files and bucket',
             lifecycleEvents: [
@@ -60,6 +66,10 @@ class Client {
     this.hooks = {
       'client:client': () => {
         this.serverless.cli.log(this.commands.client.usage);
+      },
+
+      'client:config:config': () => {
+        this._configureClient();
       },
 
       'client:deploy:deploy': () => {
@@ -123,6 +133,18 @@ class Client {
   }
 
   // Hook handlers
+
+  _configureClient(){
+    var configurationScript = _.get(this.serverless, 'service.custom.client.configurationScript');
+    var configPath = path.join(this.serverless.config.servicePath, configurationScript);
+    if(configurationScript !== null && configurationScript !== undefined){
+      this.serverless.cli.log(`Executing config script ${configurationScript}`);
+      var config = require(`${configPath}`);
+      config(this.serverless);
+    }else{
+      this.serverless.cli.log('No configutation script defined.');
+    }
+  }
 
   _removeDeployedResources() {
     this.bucketName = this.serverless.service.custom.client.bucketName;
