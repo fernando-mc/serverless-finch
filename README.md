@@ -22,6 +22,7 @@ custom:
   client:
     bucketName: unique-s3-bucketname-for-your-website-files
     distributionFolder: client/dist # (Optional) The location of your website. This defaults to client/dist
+    configurationScript: client/config.js # (Optional) The location of a config script. Perform any needed configuration logic.
     indexDocument: index.html # (Optional) The name of your index document inside your distributionFolder. Defaults to index.html
     errorDocument: error.html # (Optional) The name of your error document inside your distributionFolder. Defaults to error.html
 ```
@@ -51,6 +52,23 @@ serverless client deploy [--stage $STAGE] [--region $REGION]
 
 The plugin should output the location of your newly deployed static site to the console.
 
+
+```
+serverless client config
+```
+Optionally perform any needed pre-deployment configuration logic, such as writing configuration specific settings
+to your static assets. This is useful when deploying a full-stack application for example. The plugin will
+pass the serverless object into the defined configuration file.
+
+example configuration file.
+
+```javascript
+module.exports = function(serverless){
+  ...someLogicHere
+}
+```
+
+
 If later on you want to take down the website you can use:
 
 ```
@@ -70,7 +88,7 @@ serverless client remove
 - Fixed an issue with resolving serverless variables ([Pull 18](https://github.com/fernando-mc/serverless-finch/pull/18) - [shentonfreude](https://github.com/shentonfreude))
 
 ### v1.2.*
-- Added the `remove` option to tear down what you deploy. ([Pull 10](https://github.com/fernando-mc/serverless-finch/pull/10) thanks to [redroot](https://github.com/redroot)) 
+- Added the `remove` option to tear down what you deploy. ([Pull 10](https://github.com/fernando-mc/serverless-finch/pull/10) thanks to [redroot](https://github.com/redroot))
 - Fixed automated builds for the project (no functional differences)
 
 ## Maintainers
