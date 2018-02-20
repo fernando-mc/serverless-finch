@@ -22,8 +22,24 @@ custom:
   client:
     bucketName: unique-s3-bucketname-for-your-website-files
     distributionFolder: client/dist # (Optional) The location of your website. This defaults to client/dist
+    # See CloudFormation documentation for further details on options below
+    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-websiteconfiguration.html
     indexDocument: index.html # (Optional) The name of your index document inside your distributionFolder. Defaults to index.html
     errorDocument: error.html # (Optional) The name of your error document inside your distributionFolder. Defaults to error.html
+    redirectAllRequestsTo: # (Optional) If specified, all requests will redirect to specified endpoint
+      hostName: [hostName] # (Required) Name of the host where requests are redirected (e.g. www.google.com)  
+      protocol: [http|http] # (Optional) Protocol for redirect
+    routingRules: # (Optional) Redirect routing rules
+      - redirect: # (Required) Redirect options for this rule
+          hostName: [hostName] # (Optional) Name of the host where requests are redirected (e.g. www.google.com)  
+          httpRedirectCode: [CODE] # (Optional) HTTP status code for redirect
+          protocol: [http|http] # (Optional) Protocol for redirect
+          replaceKeyPrefixWith: [prefix] # (Optional - cannot specify this and replaceKeyWith together) The object key prefix to use in the redirect request
+          replaceKeyWith: [object] # (Optional - cannot specify this and replaceKeyPrefixWith together) The specific object key to use in the redirect request. 
+        condition: # (Optional) Rule that defines when a redirect is applied
+          keyPrefixEquals: [prefix] # (Optional - must specify this or httpErrorCodeReturnedEquals) The object key name prefix when the redirect is applied.
+          httpErrorCodeReturnedEquals: [CODE] # (Optional - must specify this or keyPrefixEquals) Applies the redirect if the error code equals this value in the event of an error
+      - [more-rules...]
 ```
 
 * **Warning:** The plugin will overwrite any data you have in the bucket name you set above if it already exists.
