@@ -1,6 +1,7 @@
 'use strict';
 
-const path     = require('path');
+const path         = require('path');
+const yml          = require('js-yaml');
 const BbPromise    = require('bluebird');
 const async        = require('async');
 const _            = require('lodash');
@@ -151,7 +152,7 @@ class Client {
 
     const distributionFolder = _.get(this.serverless, 'service.custom.client.distributionFolder', path.join('client', 'dist'));
     const clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
-    
+
     if (!Utils.dirExistsSync(clientPath)) {
       return BbPromise.reject(new Error('Could not find ' + clientPath + ' folder in your project root.'));
     }
@@ -218,6 +219,17 @@ class Client {
           }
         ]
       };
+
+      const bucketPolicyFile = this.serverless.service.custom.client.bucketPolicyFile;
+      if(bucketPolicyFile){
+        if(path.extname(bucketPolicy) === '.json'){
+          const json = JSON.parse(fs.readFileSync(bucketPolicyFile));
+          policy = json;
+        }else if(path.extname(bucketPolicy) === '.yml'){
+          const yml = yaml.safeLoad(fs.readFileSync(bucketPolicyFile));
+          policy = yml;
+        }
+      }
 
       let params = {
         Bucket: this.bucketName,
