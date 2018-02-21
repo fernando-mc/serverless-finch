@@ -222,10 +222,10 @@ class Client {
 
       const bucketPolicyFile = this.serverless.service.custom.client.bucketPolicyFile;
       if(bucketPolicyFile){
-        if(path.extname(bucketPolicy) === '.json'){
+        if(path.extname(bucketPolicyFile) === '.json'){
           const json = JSON.parse(fs.readFileSync(bucketPolicyFile));
           policy = json;
-        }else if(path.extname(bucketPolicy) === '.yml'){
+        }else if(path.extname(bucketPolicyFile) === '.yml'){
           const yml = yaml.safeLoad(fs.readFileSync(bucketPolicyFile));
           policy = yml;
         }
