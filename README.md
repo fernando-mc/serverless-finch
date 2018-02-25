@@ -24,6 +24,18 @@ custom:
     distributionFolder: client/dist # (Optional) The location of your website. This defaults to client/dist
     indexDocument: index.html # (Optional) The name of your index document inside your distributionFolder. Defaults to index.html
     errorDocument: error.html # (Optional) The name of your error document inside your distributionFolder. Defaults to error.html
+    objectMetadata: # (Optional) S3 object metadata (HTTP headers) for hosted files
+      ALL_OBJECTS: # (Optional) List of headers to set for all files in bucket
+        - name: Content-Language # HTTP header name
+          value: en-US # header value
+      specific-directory/: # List of headers to set for files in specific-directory (path relative to distributionFolder). Overrides ALL_OBJECTS headers
+        - name: Cache-Control
+          value: max-age=10000
+      specific-file.html: # List of headers to set for specific-file (path relative to distributionFolder). Overrides ALL_OBJECTS and folder headers
+        - name: Cache-Control 
+          value: no-cache 
+      
+      
 ```
 
 * **Warning:** The plugin will overwrite any data you have in the bucket name you set above if it already exists.
