@@ -309,6 +309,43 @@ class Client {
         fileKey    = filePath.replace(_this.clientPath, '').substr(1).replace(/\\/g, '/'),
         urlRoot    = regionToUrlRootMap(_this.region);
 
+    let distRoot = path.join(
+      _this.serverless.config.servicePath,
+      _this.serverless.service.custom.client.distributionFolder || path.join('client', 'dist'),
+      'DUMMY'
+    ).replace(/\\/g, '/');
+    distRoot = distRoot.substr(0, distRoot.length - 5);
+
+    let baseMetadataKeys = [
+      'Cache-Control', 
+      'Content-Disposition',
+      'Content-Encoding',
+      'Content-Language',
+      'Content-Type',
+      'Expires',
+      'Website-Redirect-Location'
+    ];
+
+    let ruleList = [];
+    let metadata = _this.serverless.service.custom.client.objectMetadata;
+    if (metadata) {
+      
+      if (metadata.ALL_OBJECTS) {
+        ruleList = ruleList.concat(metadata.ALL_OBJECTS);
+      }
+      Object.keys(metadata)
+        .filter(m => m.substr(-1, 1) === '/') // folders
+        .sort((a, b) => a.length > b.length) // sort by length ascending
+        .forEach(m => {
+          if (filePath.replace(distRoot, '').substr(0, m.length) === m) {
+            ruleList = ruleList.concat(metadata[m]);
+          }
+        });
+      if (metadata[fileKey]) {
+        ruleList = ruleList.concat(metadata[fileKey]);
+      }
+    } 
+
     this.serverless.cli.log(`Uploading file ${fileKey} to bucket ${_this.bucketName}...`);
     this.serverless.cli.log('If successful this should be deployed at:')
     this.serverless.cli.log(`http://${_this.bucketName}.${urlRoot}/${fileKey}`)
@@ -322,7 +359,17 @@ class Client {
         ContentType: mime.lookup(filePath)
       };
 
-      // TODO: remove browser caching
+      ruleList.forEach(r => {
+        if (baseMetadataKeys.includes(r.name)) {
+          params[r.name.replace('-', '')] = r.value;
+        } else {
+          if (!params.Metadata) {
+            params.Metadata = {};
+          }
+          params.Metadata[r.name] = r.value;
+        }
+      });
+
       return _this.aws.request('S3', 'putObject', params, _this.stage, _this.region);
     });
 
