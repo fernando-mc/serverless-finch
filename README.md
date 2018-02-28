@@ -46,7 +46,7 @@ echo "error page" >> client/dist/error.html
 **Fourth**, run the plugin, and visit your new website!
 
 ```
-serverless client deploy [--stage $STAGE] [--region $REGION]
+serverless client deploy [--stage $STAGE] [--region $REGION] [--no-delete-contents] [--no-config-change] [--no-policy-change] [--no-cors-change]
 ```
 
 The plugin should output the location of your newly deployed static site to the console.
