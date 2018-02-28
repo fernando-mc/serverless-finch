@@ -31,6 +31,7 @@ class Client {
     this.serverless = serverless;
     this.provider = 'aws';
     this.aws = this.serverless.getProvider(this.provider);
+	this.options = options;
 
     this.commands = {
       client: {
@@ -102,7 +103,7 @@ class Client {
   }
 
   deleteObjectsFromBucket(data) {
-    if (!this.bucketExists) return BbPromise.resolve();
+	if (!this.bucketExists || this.options['delete-contents'] === false) return BbPromise.resolve();
 
     this.serverless.cli.log(`Deleting all objects from bucket ${this.bucketName}...`);
 
@@ -184,6 +185,11 @@ class Client {
     }
 
     function configureBucket() {
+	  if (this.options['config-change'] === false) {
+	    this.serverless.cli.log(`Retaining existing bucket configuration for ${this.bucketName}...`);
+	    return BbPromise.resolve();
+	  }
+
       this.serverless.cli.log(`Configuring website bucket ${this.bucketName}...`);
 
       const indexDoc = this.serverless.service.custom.client.indexDocument || 'index.html'
@@ -201,6 +207,11 @@ class Client {
     }
 
     function configurePolicyForBucket(){
+	  if (this.options['policy-change'] === false) {
+	    this.serverless.cli.log(`Retaining existing bucket policy for ${this.bucketName}...`);
+	    return BbPromise.resolve();
+	  }
+
       this.serverless.cli.log(`Configuring policy for bucket ${this.bucketName}...`);
 
       let policy = {
@@ -228,6 +239,11 @@ class Client {
     }
 
     function configureCorsForBucket(){
+	  if (this.options['cors-change'] === false) {
+	    this.serverless.cli.log(`Retaining existing CORS policy for ${this.bucketName}...`);
+	    return BbPromise.resolve();
+	  }
+
       this.serverless.cli.log(`Configuring CORS policy for bucket ${this.bucketName}...`);
 
       let putPostDeleteRule = {
