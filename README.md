@@ -26,14 +26,14 @@ custom:
     errorDocument: error.html # (Optional) The name of your error document inside your distributionFolder. Defaults to error.html
     objectMetadata: # (Optional) S3 object metadata (HTTP headers) for hosted files
       ALL_OBJECTS: # (Optional) List of headers to set for all files in bucket
-        - name: Content-Language # HTTP header name
-          value: en-US # header value
-      specific-directory/: # List of headers to set for files in specific-directory (path relative to distributionFolder). Overrides ALL_OBJECTS headers
-        - name: Cache-Control
-          value: max-age=10000
-      specific-file.html: # List of headers to set for specific-file (path relative to distributionFolder). Overrides ALL_OBJECTS and folder headers
-        - name: Cache-Control 
-          value: no-cache 
+        - headerName: Content-Language # HTTP header name (e.g. 'Content-Language')
+          headerValue: en-US # HTTP Header value (e.g. 'en-US')
+      specific-directory/: # List of headers to set for files in the directory 'specific-directory' (path relative to distributionFolder). Overrides ALL_OBJECTS headers
+        - headerName: Cache-Control
+          headerValue: max-age=10000
+      specific-file.extension: # List of headers to set for the file 'specific-file.extenstion' (path relative to distributionFolder). Overrides ALL_OBJECTS and directory-level headers
+        - headerName: Cache-Control 
+          headerValue: no-cache 
       
       
 ```

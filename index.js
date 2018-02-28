@@ -306,15 +306,18 @@ class Client {
 
   _uploadFile(filePath) {
     let _this      = this,
-        fileKey    = filePath.replace(_this.clientPath, '').substr(1).replace(/\\/g, '/'),
         urlRoot    = regionToUrlRootMap(_this.region);
+
+    let fileKey = path.normalize(filePath).replace(_this.clientPath, '');
+    if (fileKey.substr(0, 1) === path.sep) {
+      fileKey = fileKey.replace(path.sep, '');
+    }
 
     let distRoot = path.join(
       _this.serverless.config.servicePath,
-      _this.serverless.service.custom.client.distributionFolder || path.join('client', 'dist'),
-      'DUMMY'
-    ).replace(/\\/g, '/');
-    distRoot = distRoot.substr(0, distRoot.length - 5);
+      _this.serverless.service.custom.client.distributionFolder || path.join('client', 'dist')
+    );
+    distRoot += path.sep;
 
     let baseMetadataKeys = [
       'Cache-Control', 
