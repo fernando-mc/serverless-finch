@@ -28,7 +28,7 @@ custom:
       ALL_OBJECTS: # (Optional) List of headers to set for all files in bucket
         - headerName: Content-Language # HTTP header name (e.g. 'Content-Language')
           headerValue: en-US # HTTP Header value (e.g. 'en-US')
-      specific-directory/: # List of headers to set for files in the directory 'specific-directory' (path relative to distributionFolder). Overrides ALL_OBJECTS headers
+      specific-directory/: # List of headers to set for files in the directory 'specific-directory' (path relative to distributionFolder). Overrides ALL_OBJECTS headers. Must end in '/' to indicate a directory
         - headerName: Cache-Control
           headerValue: max-age=10000
       specific-file.extension: # List of headers to set for the file 'specific-file.extenstion' (path relative to distributionFolder). Overrides ALL_OBJECTS and directory-level headers
