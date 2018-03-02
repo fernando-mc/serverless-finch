@@ -319,7 +319,7 @@ class Client {
     );
     distRoot += path.sep;
 
-    let baseMetadataKeys = [
+    let baseHeaderKeys = [
       'Cache-Control', 
       'Content-Disposition',
       'Content-Encoding',
@@ -330,22 +330,21 @@ class Client {
     ];
 
     let ruleList = [];
-    let metadata = _this.serverless.service.custom.client.objectMetadata;
-    if (metadata) {
-      
-      if (metadata.ALL_OBJECTS) {
-        ruleList = ruleList.concat(metadata.ALL_OBJECTS);
+    let headers = _this.serverless.service.custom.client.objectHeaders;
+    if (headers) {
+      if (headers.ALL_OBJECTS) {
+        ruleList = ruleList.concat(headers.ALL_OBJECTS);
       }
-      Object.keys(metadata)
+      Object.keys(headers)
         .filter(m => m.substr(-1, 1) === '/') // folders
         .sort((a, b) => a.length > b.length) // sort by length ascending
         .forEach(m => {
           if (filePath.replace(distRoot, '').substr(0, m.length) === m) {
-            ruleList = ruleList.concat(metadata[m]);
+            ruleList = ruleList.concat(headers[m]);
           }
         });
-      if (metadata[fileKey]) {
-        ruleList = ruleList.concat(metadata[fileKey]);
+      if (headers[fileKey]) {
+        ruleList = ruleList.concat(headers[fileKey]);
       }
     } 
 
@@ -363,7 +362,7 @@ class Client {
       };
 
       ruleList.forEach(r => {
-        if (baseMetadataKeys.includes(r.name)) {
+        if (baseHeaderKeys.includes(r.name)) {
           params[r.name.replace('-', '')] = r.value;
         } else {
           if (!params.Metadata) {

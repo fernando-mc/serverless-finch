@@ -24,7 +24,7 @@ custom:
     distributionFolder: client/dist # (Optional) The location of your website. This defaults to client/dist
     indexDocument: index.html # (Optional) The name of your index document inside your distributionFolder. Defaults to index.html
     errorDocument: error.html # (Optional) The name of your error document inside your distributionFolder. Defaults to error.html
-    objectMetadata: # (Optional) S3 object metadata (HTTP headers) for hosted files
+    objectHeaders: # (Optional) S3 object metadata (HTTP headers) for hosted files
       ALL_OBJECTS: # (Optional) List of headers to set for all files in bucket
         - headerName: Content-Language # HTTP header name (e.g. 'Content-Language')
           headerValue: en-US # HTTP Header value (e.g. 'en-US')
