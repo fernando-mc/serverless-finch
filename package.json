@@ -7,7 +7,11 @@
   "description": "Deploy your serverless static website to AWS S3.",
   "main": "index.js",
   "scripts": {
+    "precommit": "lint-staged",
     "test": "mocha"
+  },
+  "lint-staged": {
+    "**/*.{js,json}": ["prettier --write", "git add"]
   },
   "repository": {
     "type": "git",
@@ -39,7 +43,10 @@
     "mime": "^1.2.11"
   },
   "devDependencies": {
+    "husky": "^0.14.3",
+    "lint-staged": "^7.0.0",
     "mocha": "^5.0.0",
+    "prettier": "^1.11.1",
     "request": "^2.83.0",
     "serverless": "^1.26.0"
   }
