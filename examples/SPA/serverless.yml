@@ -1,0 +1,21 @@
+service: example-SPA-site
+
+frameworkVersion: "=1.26.0"
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: dev
+  region: us-east-1
+  profile: serverless-admin
+
+plugins:
+  - serverless-finch
+
+custom:
+  client:
+    bucketName: my-spa-bucket
+    distributionFolder: client/dist 
+    indexDocument: index.html
+    errorDocument: index.html
+  
