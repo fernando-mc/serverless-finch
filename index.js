@@ -6,6 +6,7 @@ const async        = require('async');
 const _            = require('lodash');
 const mime         = require('mime');
 const fs           = require('fs');
+const is           = require('is_js');
 
 // per http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints
 const regionToUrlRootMap = region => ({
@@ -202,15 +203,15 @@ class Client {
         // if redirectAllRequestsTo specified, no other options can be specified
         // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-websiteconfiguration.html
         const clientConfigOptions = Object.keys(this.serverless.service.custom.client);
-        confirm(
+        confirmThat(
           clientConfigOptions.indexOf('indexDocument') === -1, 
           'indexDocument cannot be specified with redirectAllRequestsTo'
         );
-        confirm(
+        confirmThat(
           clientConfigOptions.indexOf('errorDocument') === -1, 
           'errorDocument cannot be specified with redirectAllRequestsTo'
         );
-        confirm(
+        confirmThat(
           clientConfigOptions.indexOf('routingRules') === -1, 
           'routingRules cannot be specified with redirectAllRequestsTo'
         );
@@ -218,15 +219,17 @@ class Client {
         params.WebsiteConfiguration.RedirectAllRequestsTo = {};
         
         let hostName = redirectAllRequestsTo.hostName;
-        confirmExists(hostName, 'hostName is required if redirectAllRequestsTo is specified');
-        confirmString(hostName, 'hostName must be a string');
+        confirmThat(is.existy(hostName), 'hostName is required if redirectAllRequestsTo is specified');
+        confirmThat(is.string(hostName), 'hostName must be a string');
         params.WebsiteConfiguration.RedirectAllRequestsTo.HostName = redirectAllRequestsTo.hostName;
 
         if (redirectAllRequestsTo.protocol) {
-          confirmString(redirectAllRequestsTo.protocol, 'hostName must be a string');
-          confirmInArray(
-            redirectAllRequestsTo.protocol.toLowerCase(), 
-            ['http', 'https'],
+          confirmThat(is.string(redirectAllRequestsTo.protocol), 'hostName must be a string');
+          confirmThat(
+            is.inArray(
+              redirectAllRequestsTo.protocol.toLowerCase(), 
+              ['http', 'https']
+            ),
             "redirectAllRequestsTo must be either http or https"
           );
           params.WebsiteConfiguration.RedirectAllRequestsTo.Protocol = redirectAllRequestsTo.protocol;
@@ -240,16 +243,16 @@ class Client {
       if (routingRules) {
         params.WebsiteConfiguration.RoutingRules = [];
         
-        confirmArray(routingRules, 'routingRules must be a list');
+        confirmThat(is.array(routingRules), 'routingRules must be a list');
         
         routingRules.forEach(r => {
           const routingRule = {
             Redirect: {}
           };
-          confirmExists(r.redirect, 'redirect must be specified for each member of routingRules');
+          confirmThat(is.existy(r.redirect), 'redirect must be specified for each member of routingRules');
 
-          confirm(
-            !(r.redirect.replaceKeyPrefixWith && r.redirect.replaceKeyWith),
+          confirmThat(
+            !(is.existy(r.redirect.replaceKeyPrefixWith) && is.existy(r.redirect.replaceKeyWith)),
             "replaceKeyPrefixWith and replaceKeyWith cannot both be specified"
           );
 
@@ -257,10 +260,10 @@ class Client {
           props.forEach(p => {
             if (r.redirect[p]) {
               if (p === "httpRedirectCode") {
-                confirmInteger(r.redirect[p], "httpRedirectCode must be an integer");
+                confirmThat(is.integer(r.redirect[p]), "httpRedirectCode must be an integer");
                 r.redirect[p] = r.redirect[p].toString();
               } else {
-                confirmString(r.redirect[p], `${p} must be a string`);
+                confirmThat(is.string(r.redirect[p]), `${p} must be a string`);
               }
               routingRule.Redirect[p.charAt(0).toUpperCase() + p.slice(1)] = r.redirect[p];
             }
@@ -269,8 +272,8 @@ class Client {
           if (r.condition) {
             routingRule.Condition = {};
 
-            confirm(
-              r.condition.httpErrorCodeReturnedEquals || r.condition.keyPrefixEquals,
+            confirmThat(
+              is.existy(r.condition.httpErrorCodeReturnedEquals) || is.existy(r.condition.keyPrefixEquals),
               "httpErrorCodeReturnedEquals or keyPrefixEquals must be defined for each condition"
             );
 
@@ -278,10 +281,10 @@ class Client {
             props.forEach(p => {
               if (r.condition[p]) {
                 if (p === "httpErrorCodeReturnedEquals") {
-                  confirmInteger(r.condition[p], "httpErrorCodeReturnedEquals must be an integer");
+                  confirmThat(is.integer(r.condition[p]), "httpErrorCodeReturnedEquals must be an integer");
                   r.condition[p] = r.condition[p].toString();
                 } else {
-                  confirmString(r.condition[p], `${p} must be a string`);
+                  confirmThat(is.string(r.condition[p]), `${p} must be a string`);
                 }
                 routingRule.Condition[p.charAt(0).toUpperCase() + p.slice(1)] = r.condition[p];
               }
@@ -293,14 +296,9 @@ class Client {
         
       }
 
-      function confirm(expr, error) {
+      function confirmThat(expr, error) {
         if (!expr) { BbPromise.reject(new Error(error)); }
       }
-      function confirmString(value, error) { confirm(_.isString(value), error); }
-      function confirmInteger(value, error) { confirm(_.isInteger(value), value); }
-      function confirmArray(value, error) { confirm(_.isArray(value), error); }
-      function confirmExists(value, error) { confirm(value, error); }
-      function confirmInArray(value, array, error) { confirm(_.includes(array, value), error); }
 
       return this.aws.request('S3', 'putBucketWebsite', params, this.stage, this.region);
     }
