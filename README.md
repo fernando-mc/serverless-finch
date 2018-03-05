@@ -28,12 +28,12 @@ custom:
     errorDocument: error.html # (Optional) The name of your error document inside your distributionFolder. Defaults to error.html
     redirectAllRequestsTo: # (Optional) If specified, all requests will redirect to specified endpoint
       hostName: [hostName] # (Required) Name of the host where requests are redirected (e.g. www.google.com)  
-      protocol: [http|http] # (Optional) Protocol for redirect
+      protocol: [http|https] # (Optional) Protocol for redirect
     routingRules: # (Optional) Redirect routing rules
       - redirect: # (Required) Redirect options for this rule
           hostName: [hostName] # (Optional) Name of the host where requests are redirected (e.g. www.google.com)  
-          httpRedirectCode: [CODE] # (Optional) HTTP status code for redirect
-          protocol: [http|http] # (Optional) Protocol for redirect
+          httpRedirectCode: [CODE] # (Optional) HTTP status code for redirect (e.g. 404, 500, etc.)
+          protocol: [http|https] # (Optional) Protocol for redirect
           replaceKeyPrefixWith: [prefix] # (Optional - cannot specify this and replaceKeyWith together) The object key prefix to use in the redirect request
           replaceKeyWith: [object] # (Optional - cannot specify this and replaceKeyPrefixWith together) The specific object key to use in the redirect request. 
         condition: # (Optional) Rule that defines when a redirect is applied
