@@ -300,8 +300,8 @@ class Client {
   }
 
   _uploadFile(filePath) {
-    let _this      = this,
-        urlRoot    = regionToUrlRootMap(_this.region);
+    let _this = this,
+      urlRoot = regionToUrlRootMap(_this.region);
 
     let fileKey = path.normalize(filePath).replace(_this.clientPath, '');
     if (fileKey.substr(0, 1) === path.sep) {
@@ -315,7 +315,7 @@ class Client {
     distRoot += path.sep;
 
     let baseHeaderKeys = [
-      'Cache-Control', 
+      'Cache-Control',
       'Content-Disposition',
       'Content-Encoding',
       'Content-Language',
@@ -341,7 +341,7 @@ class Client {
       if (headers[fileKey]) {
         ruleList = ruleList.concat(headers[fileKey]);
       }
-    } 
+    }
 
     this.serverless.cli.log(`Uploading file ${fileKey} to bucket ${_this.bucketName}...`);
     this.serverless.cli.log('If successful this should be deployed at:');
