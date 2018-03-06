@@ -16,7 +16,6 @@ describe('Client', () => {
 
   describe('#constructor()', () => {
     it('should set the provider variable to "aws"', () =>
-        assert.deepEqual(pluginInstance.provider, 'aws')
-    );
+      assert.deepEqual(pluginInstance.provider, 'aws'));
   });
-})
+});
