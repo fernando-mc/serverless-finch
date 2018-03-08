@@ -191,38 +191,33 @@ No command-line parameters exist at this time.
 
 ## Contributing
 
-For guidelines on contributing to the project, please refer to our [Contributing](docs/CONTRIBUTING.md) page.
+For guidelines on contributing to the project, please refer to our [Contributing](docs/CONTRIBUTING.md) page. 
 
 ## Release Notes
 
 ### v1.4.\*
-
-* Added the ability to set custom index and error documents. ([Pull 20](https://github.com/fernando-mc/serverless-finch/pull/20) - [evanseeds](https://github.com/evanseeds))
+- Added the ability to set custom index and error documents. ([Pull 20](https://github.com/fernando-mc/serverless-finch/pull/20) - [evanseeds](https://github.com/evanseeds))
 
 ### v1.3.\*
-
-* Added the ability to set a `distributionFolder` configuration value. This enables you to upload your website files from a custom directory ([Pull 12](https://github.com/fernando-mc/serverless-finch/pull/12) - [pradel](https://github.com/pradel))
-* Updated the URL to the official static website endpoint URL ([Pull 13](https://github.com/fernando-mc/serverless-finch/pull/13) - [amsross](https://github.com/amsross))
-* Added a new AWS region ([Pull 14](https://github.com/fernando-mc/serverless-finch/pull/14) - [daguix](https://github.com/daguix))
-* Fixed an issue with resolving serverless variables ([Pull 18](https://github.com/fernando-mc/serverless-finch/pull/18) - [shentonfreude](https://github.com/shentonfreude))
+- Added the ability to set a `distributionFolder` configuration value. This enables you to upload your website files from a custom directory ([Pull 12](https://github.com/fernando-mc/serverless-finch/pull/12) - [pradel](https://github.com/pradel))
+- Updated the URL to the official static website endpoint URL ([Pull 13](https://github.com/fernando-mc/serverless-finch/pull/13) - [amsross](https://github.com/amsross))
+- Added a new AWS region ([Pull 14](https://github.com/fernando-mc/serverless-finch/pull/14) - [daguix](https://github.com/daguix))
+- Fixed an issue with resolving serverless variables ([Pull 18](https://github.com/fernando-mc/serverless-finch/pull/18) - [shentonfreude](https://github.com/shentonfreude))
 
 ### v1.2.\*
-
-* Added the `remove` option to tear down what you deploy. ([Pull 10](https://github.com/fernando-mc/serverless-finch/pull/10) thanks to [redroot](https://github.com/redroot))
-* Fixed automated builds for the project (no functional differences)
+- Added the `remove` option to tear down what you deploy. ([Pull 10](https://github.com/fernando-mc/serverless-finch/pull/10) thanks to [redroot](https://github.com/redroot))
+- Fixed automated builds for the project (no functional differences)
 
 ## Maintainers
-
-* **You** - If you're interested in having a more active role in development and becoming a maintainer [get in touch](https://www.fernandomc.com/contact/).
-* Fernando Medina Corey - [fernando-mc](https://github.com/fernando-mc)
+- **You** - If you're interested in having a more active role in development and becoming a maintainer [get in touch](https://www.fernandomc.com/contact/).
+- Fernando Medina Corey - [fernando-mc](https://github.com/fernando-mc)
 
 ## Contributors
-
-* [redroot](https://github.com/redroot)
-* [amsross](https://github.com/amsross)
-* [pradel](https://github.com/pradel)
-* [daguix](https://github.com/daguix)
-* [shentonfreude](https://github.com/shentonfreude)
-* [evanseeds](https://github.com/evanseeds)
+- [redroot](https://github.com/redroot)
+- [amsross](https://github.com/amsross)
+- [pradel](https://github.com/pradel)
+- [daguix](https://github.com/daguix)
+- [shentonfreude](https://github.com/shentonfreude)
+- [evanseeds](https://github.com/evanseeds)
 
 Forked from the [**serverless-client-s3**](https://github.com/serverless/serverless-client-s3/)
