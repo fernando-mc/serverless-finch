@@ -6,6 +6,7 @@ const async = require('async');
 const _ = require('lodash');
 const mime = require('mime');
 const fs = require('fs');
+const is = require('is_js');
 
 // per http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints
 const regionToUrlRootMap = region =>
