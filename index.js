@@ -69,7 +69,7 @@ class Client {
   // Shared functions
 
   listBuckets() {
-    return this.aws.request('S3', 'listBuckets', {}, this.stage, this.region).bind(this);
+    return this.aws.request('S3', 'listBuckets', {}).bind(this);
   }
 
   findBucket(data) {
@@ -92,7 +92,7 @@ class Client {
       Bucket: this.bucketName
     };
 
-    return this.aws.request('S3', 'listObjectsV2', params, this.stage, this.region);
+    return this.aws.request('S3', 'listObjectsV2', params);
   }
 
   deleteObjectsFromBucket(data) {
@@ -112,7 +112,7 @@ class Client {
         Delete: { Objects: Objects }
       };
 
-      return this.aws.request('S3', 'deleteObjects', params, this.stage, this.region);
+      return this.aws.request('S3', 'deleteObjects', params);
     }
   }
 
@@ -131,7 +131,7 @@ class Client {
       let params = {
         Bucket: this.bucketName
       };
-      return this.aws.request('S3', 'deleteBucket', params, this.stage, this.region);
+      return this.aws.request('S3', 'deleteBucket', params);
     }
 
     return BbPromise.delay(safetyDelay)
@@ -189,7 +189,7 @@ class Client {
         Bucket: this.bucketName
       };
 
-      return this.aws.request('S3', 'createBucket', params, this.stage, this.region);
+      return this.aws.request('S3', 'createBucket', params);
     }
 
     function configureBucket() {
@@ -206,7 +206,7 @@ class Client {
         }
       };
 
-      return this.aws.request('S3', 'putBucketWebsite', params, this.stage, this.region);
+      return this.aws.request('S3', 'putBucketWebsite', params);
     }
 
     function configurePolicyForBucket() {
@@ -233,7 +233,7 @@ class Client {
         Policy: JSON.stringify(policy)
       };
 
-      return this.aws.request('S3', 'putBucketPolicy', params, this.stage, this.region);
+      return this.aws.request('S3', 'putBucketPolicy', params);
     }
 
     function configureCorsForBucket() {
@@ -260,7 +260,7 @@ class Client {
         }
       };
 
-      return this.aws.request('S3', 'putBucketCors', params, this.stage, this.region);
+      return this.aws.request('S3', 'putBucketCors', params);
     }
 
     return this.listBuckets()
@@ -366,7 +366,7 @@ class Client {
         }
       });
 
-      return _this.aws.request('S3', 'putObject', params, _this.stage, _this.region);
+      return _this.aws.request('S3', 'putObject', params);
     });
   }
 }
