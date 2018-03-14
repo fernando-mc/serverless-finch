@@ -356,13 +356,13 @@ class Client {
       };
 
       ruleList.forEach(r => {
-        if (baseHeaderKeys.includes(r.name)) {
-          params[r.name.replace('-', '')] = r.value;
+        if (baseHeaderKeys.includes(r.headerName)) {
+          params[r.headerName.replace('-', '')] = r.headerValue;
         } else {
           if (!params.Metadata) {
             params.Metadata = {};
           }
-          params.Metadata[r.name] = r.value;
+          params.Metadata[r.headerName] = r.headerValue;
         }
       });
 
