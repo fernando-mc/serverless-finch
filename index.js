@@ -70,7 +70,7 @@ class Client {
   // Shared functions
 
   listBuckets() {
-    return this.aws.request('S3', 'listBuckets', {}, this.stage, this.region).bind(this);
+    return this.aws.request('S3', 'listBuckets', {}).bind(this);
   }
 
   findBucket(data) {
@@ -93,7 +93,7 @@ class Client {
       Bucket: this.bucketName
     };
 
-    return this.aws.request('S3', 'listObjectsV2', params, this.stage, this.region);
+    return this.aws.request('S3', 'listObjectsV2', params);
   }
 
   deleteObjectsFromBucket(data) {
@@ -113,7 +113,7 @@ class Client {
         Delete: { Objects: Objects }
       };
 
-      return this.aws.request('S3', 'deleteObjects', params, this.stage, this.region);
+      return this.aws.request('S3', 'deleteObjects', params);
     }
   }
 
@@ -132,7 +132,7 @@ class Client {
       let params = {
         Bucket: this.bucketName
       };
-      return this.aws.request('S3', 'deleteBucket', params, this.stage, this.region);
+      return this.aws.request('S3', 'deleteBucket', params);
     }
 
     return BbPromise.delay(safetyDelay)
@@ -190,7 +190,7 @@ class Client {
         Bucket: this.bucketName
       };
 
-      return this.aws.request('S3', 'createBucket', params, this.stage, this.region);
+      return this.aws.request('S3', 'createBucket', params);
     }
 
     function configureBucket() {
@@ -212,15 +212,15 @@ class Client {
         // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-websiteconfiguration.html
         const clientConfigOptions = Object.keys(this.serverless.service.custom.client);
         confirmThat(
-          clientConfigOptions.indexOf('indexDocument') === -1,
+          !is.inArray('indexDocument', clientConfigOptions),
           'indexDocument cannot be specified with redirectAllRequestsTo'
         );
         confirmThat(
-          clientConfigOptions.indexOf('errorDocument') === -1,
+          !is.inArray('errorDocument', clientConfigOptions),
           'errorDocument cannot be specified with redirectAllRequestsTo'
         );
         confirmThat(
-          clientConfigOptions.indexOf('routingRules') === -1,
+          !is.inArray('routingRules', clientConfigOptions),
           'routingRules cannot be specified with redirectAllRequestsTo'
         );
 
@@ -323,7 +323,7 @@ class Client {
         }
       }
 
-      return this.aws.request('S3', 'putBucketWebsite', params, this.stage, this.region);
+      return this.aws.request('S3', 'putBucketWebsite', params);
     }
 
     function configurePolicyForBucket() {
@@ -350,7 +350,7 @@ class Client {
         Policy: JSON.stringify(policy)
       };
 
-      return this.aws.request('S3', 'putBucketPolicy', params, this.stage, this.region);
+      return this.aws.request('S3', 'putBucketPolicy', params);
     }
 
     function configureCorsForBucket() {
@@ -377,7 +377,7 @@ class Client {
         }
       };
 
-      return this.aws.request('S3', 'putBucketCors', params, this.stage, this.region);
+      return this.aws.request('S3', 'putBucketCors', params);
     }
 
     return this.listBuckets()
@@ -437,7 +437,7 @@ class Client {
       };
 
       // TODO: remove browser caching
-      return _this.aws.request('S3', 'putObject', params, _this.stage, _this.region);
+      return _this.aws.request('S3', 'putObject', params);
     });
   }
 }
