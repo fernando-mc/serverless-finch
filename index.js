@@ -301,11 +301,47 @@ class Client {
 
   _uploadFile(filePath) {
     let _this = this,
-      fileKey = filePath
-        .replace(_this.clientPath, '')
-        .substr(1)
-        .replace(/\\/g, '/'),
       urlRoot = regionToUrlRootMap(_this.region);
+
+    let fileKey = path.normalize(filePath).replace(_this.clientPath, '');
+    if (fileKey.substr(0, 1) === path.sep) {
+      fileKey = fileKey.replace(path.sep, '');
+    }
+
+    let distRoot = path.join(
+      _this.serverless.config.servicePath,
+      _this.serverless.service.custom.client.distributionFolder || path.join('client', 'dist')
+    );
+    distRoot += path.sep;
+
+    let baseHeaderKeys = [
+      'Cache-Control',
+      'Content-Disposition',
+      'Content-Encoding',
+      'Content-Language',
+      'Content-Type',
+      'Expires',
+      'Website-Redirect-Location'
+    ];
+
+    let ruleList = [];
+    let headers = _this.serverless.service.custom.client.objectHeaders;
+    if (headers) {
+      if (headers.ALL_OBJECTS) {
+        ruleList = ruleList.concat(headers.ALL_OBJECTS);
+      }
+      Object.keys(headers)
+        .filter(m => m.substr(-1, 1) === '/') // folders
+        .sort((a, b) => a.length > b.length) // sort by length ascending
+        .forEach(m => {
+          if (filePath.replace(distRoot, '').substr(0, m.length) === m) {
+            ruleList = ruleList.concat(headers[m]);
+          }
+        });
+      if (headers[fileKey]) {
+        ruleList = ruleList.concat(headers[fileKey]);
+      }
+    }
 
     this.serverless.cli.log(`Uploading file ${fileKey} to bucket ${_this.bucketName}...`);
     this.serverless.cli.log('If successful this should be deployed at:');
@@ -319,7 +355,17 @@ class Client {
         ContentType: mime.lookup(filePath)
       };
 
-      // TODO: remove browser caching
+      ruleList.forEach(r => {
+        if (baseHeaderKeys.includes(r.headerName)) {
+          params[r.headerName.replace('-', '')] = r.headerValue;
+        } else {
+          if (!params.Metadata) {
+            params.Metadata = {};
+          }
+          params.Metadata[r.headerName] = r.headerValue;
+        }
+      });
+
       return _this.aws.request('S3', 'putObject', params);
     });
   }
