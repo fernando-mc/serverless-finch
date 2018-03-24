@@ -6,6 +6,7 @@ const async = require('async');
 const _ = require('lodash');
 const mime = require('mime');
 const fs = require('fs');
+const is = require('is_js');
 
 // per http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints
 const regionToUrlRootMap = region =>
@@ -193,6 +194,8 @@ class Client {
     }
 
     function configureBucket() {
+      const Error = this.serverless.classes.Error;
+
       this.serverless.cli.log(`Configuring website bucket ${this.bucketName}...`);
 
       const indexDoc = this.serverless.service.custom.client.indexDocument || 'index.html';
@@ -200,11 +203,125 @@ class Client {
 
       let params = {
         Bucket: this.bucketName,
-        WebsiteConfiguration: {
-          IndexDocument: { Suffix: indexDoc },
-          ErrorDocument: { Key: errorDoc }
-        }
+        WebsiteConfiguration: {}
       };
+
+      const redirectAllRequestsTo = this.serverless.service.custom.client.redirectAllRequestsTo;
+      if (redirectAllRequestsTo) {
+        // if redirectAllRequestsTo specified, no other options can be specified
+        // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-websiteconfiguration.html
+        const clientConfigOptions = Object.keys(this.serverless.service.custom.client);
+        confirmThat(
+          !is.inArray('indexDocument', clientConfigOptions),
+          'indexDocument cannot be specified with redirectAllRequestsTo'
+        );
+        confirmThat(
+          !is.inArray('errorDocument', clientConfigOptions),
+          'errorDocument cannot be specified with redirectAllRequestsTo'
+        );
+        confirmThat(
+          !is.inArray('routingRules', clientConfigOptions),
+          'routingRules cannot be specified with redirectAllRequestsTo'
+        );
+
+        params.WebsiteConfiguration.RedirectAllRequestsTo = {};
+
+        let hostName = redirectAllRequestsTo.hostName;
+        confirmThat(
+          is.existy(hostName),
+          'hostName is required if redirectAllRequestsTo is specified'
+        );
+        confirmThat(is.string(hostName), 'hostName must be a string');
+        params.WebsiteConfiguration.RedirectAllRequestsTo.HostName = redirectAllRequestsTo.hostName;
+
+        if (redirectAllRequestsTo.protocol) {
+          confirmThat(is.string(redirectAllRequestsTo.protocol), 'hostName must be a string');
+          confirmThat(
+            is.inArray(redirectAllRequestsTo.protocol.toLowerCase(), ['http', 'https']),
+            'redirectAllRequestsTo must be either http or https'
+          );
+          params.WebsiteConfiguration.RedirectAllRequestsTo.Protocol =
+            redirectAllRequestsTo.protocol;
+        }
+      } else {
+        params.WebsiteConfiguration.IndexDocument = { Suffix: indexDoc };
+        params.WebsiteConfiguration.ErrorDocument = { Key: errorDoc };
+      }
+
+      const routingRules = this.serverless.service.custom.client.routingRules;
+      if (routingRules) {
+        params.WebsiteConfiguration.RoutingRules = [];
+
+        confirmThat(is.array(routingRules), 'routingRules must be a list');
+
+        routingRules.forEach(r => {
+          const routingRule = {
+            Redirect: {}
+          };
+          confirmThat(
+            is.existy(r.redirect),
+            'redirect must be specified for each member of routingRules'
+          );
+
+          confirmThat(
+            !(is.existy(r.redirect.replaceKeyPrefixWith) && is.existy(r.redirect.replaceKeyWith)),
+            'replaceKeyPrefixWith and replaceKeyWith cannot both be specified'
+          );
+
+          const props = [
+            'hostName',
+            'httpRedirectCode',
+            'protocol',
+            'replaceKeyPrefixWith',
+            'replaceKeyWith'
+          ];
+          props.forEach(p => {
+            if (r.redirect[p]) {
+              if (p === 'httpRedirectCode') {
+                confirmThat(is.integer(r.redirect[p]), 'httpRedirectCode must be an integer');
+                r.redirect[p] = r.redirect[p].toString();
+              } else {
+                confirmThat(is.string(r.redirect[p]), `${p} must be a string`);
+              }
+              routingRule.Redirect[p.charAt(0).toUpperCase() + p.slice(1)] = r.redirect[p];
+            }
+          });
+
+          if (r.condition) {
+            routingRule.Condition = {};
+
+            confirmThat(
+              is.existy(r.condition.httpErrorCodeReturnedEquals) ||
+                is.existy(r.condition.keyPrefixEquals),
+              'httpErrorCodeReturnedEquals or keyPrefixEquals must be defined for each condition'
+            );
+
+            const props = ['httpErrorCodeReturnedEquals', 'keyPrefixEquals'];
+            props.forEach(p => {
+              if (r.condition[p]) {
+                if (p === 'httpErrorCodeReturnedEquals') {
+                  confirmThat(
+                    is.integer(r.condition[p]),
+                    'httpErrorCodeReturnedEquals must be an integer'
+                  );
+                  r.condition[p] = r.condition[p].toString();
+                } else {
+                  confirmThat(is.string(r.condition[p]), `${p} must be a string`);
+                }
+                routingRule.Condition[p.charAt(0).toUpperCase() + p.slice(1)] = r.condition[p];
+              }
+            });
+          }
+
+          params.WebsiteConfiguration.RoutingRules.push(routingRule);
+        });
+      }
+
+      function confirmThat(expr, error) {
+        if (!expr) {
+          BbPromise.reject(new Error(error));
+        }
+      }
 
       return this.aws.request('S3', 'putBucketWebsite', params);
     }

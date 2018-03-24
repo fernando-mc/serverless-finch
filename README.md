@@ -26,7 +26,7 @@ custom:
     # [other configuration parameters] (see Configuration Parameters below)
 ```
 
-**NOTE:** *For full example configurations, please refer to the [examples](examples) folder.*
+**NOTE:** _For full example configurations, please refer to the [examples](examples) folder._
 
 **Second**, Create a website folder in the root directory of your Serverless project. This is where your distribution-ready website should live. By default the plugin expects the files to live in a folder called `client/dist`. But this is configurable with the `distributionFolder` option (see the [Configuration Parameters](#configuration-parameters) below).
 
@@ -153,6 +153,68 @@ Headers may be specified globally for all files in the bucket by adding a `heade
 
 Headers with more specificity will take precedence over more general ones. For instance, if 'Cache-Control' was set to 'max-age=100' in `ALL_OBJECTS` and to 'max-age=500' in `my/folder/`, the files in `my/folder/` would get a header of 'Cache-Control: max-age=500'.
 
+---
+
+**redirectAllRequestsTo**
+
+_optional_, no default
+
+```yaml
+custom:
+  client:
+    ...
+    redirectAllRequestsTo:
+      hostName: [hostName]
+      protocol: [http|https]
+    ...
+```
+
+Use the `redirectAllRequestsTo` option if you want to route all traffic coming to your website to a different address. `hostName` is the address that requests should be redirected to (e.g. 'www.other-website.com'). `protocol` is the protocol to use for the redirect and must be either 'http' or 'https'.
+
+[AWS Documentation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-websiteconfiguration.html#cfn-s3-websiteconfiguration-redirectallrequeststo)
+
+---
+
+**routingRules**
+
+_optional_, no default
+
+```yaml
+custom:
+  client:
+    ...
+    routingRules:
+      - redirect:
+          hostName: [hostName]
+          httpRedirectCode: [CODE]
+          protocol: [http|https]
+          replaceKeyPrefixWith: [prefix]
+          replaceKeyWith: [object]
+        condition:
+          keyPrefixEquals: [prefix]
+          httpErrorCodeReturnedEquals: [CODE]
+      - [more-rules...]
+    ...
+```
+
+The `routingRules` option can be used to define rules for when and how certain requests to your site should be redirected. Each rule in the `redirectRules` list consists of a (required) `redirect` definition and (optionally) a `condition` on which the redirect is applied.
+
+The `redirect` property of each rule has five optional parameters:
+
+* `hostName` is the name of the host that the request should be redirected to (e.g. 'www.other-site.com'). Defaults to the host from the original request.
+* `httpRedirectCode` is the HTTP status code to use for the redirect (e.g. 301, 303, 308).
+* `protocol` is the protocol to use for the redirect and must be 'http' or 'https'. Defaults to the protocol from the original request.
+* `replaceKeyPrefixWith` specifies the string to replace the portion of the route specified in the `keyPrefixEquals` with in the redirect. For instance, if you want to redirect requests for pages starting with '/images' to pages starting with '/assets/images', you can specify `keyPrefixEquals` as '/images' and `replaceKeyPrefixWith` as '/assets/images'. _Cannot be specified along with `replaceKeyWith`_.
+* `replaceKeyWith` specifies a specific page to redirect requests to (e.g. 'landing.html'). _Cannot be specified along with `replaceKeyPrefixWith`_.
+
+The `condition` property has two optional parameters:
+
+* `keyPrefixEquals` specifies that requests to pages starting with the specified value should be redirected. Often used with the `replaceKeyPrefixWith` and `replaceKeyWith` `redirect` properties.
+* `httpErrorCodeReturnedEquals` specifies that requests resulting in the given HTTP error code (e.g. 404, 500) should be redirected.
+
+_If `condition` is not specified, then all requests will be redirected in accordance with the specified `redirect` properties_
+
+[AWS Documentation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-websiteconfiguration.html#cfn-s3-websiteconfiguration-routingrules)
 
 ---
 
