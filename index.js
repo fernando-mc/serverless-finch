@@ -13,12 +13,6 @@ const validateClient = require('./lib/validate');
 class Client {
   constructor(serverless, options) {
     this.error = serverless.classes.Error;
-
-    const validationError = validateClient(serverless, options);
-    if (validationError) {
-      BbPromise.reject(new this.error(validationError));
-    }
-
     this.serverless = serverless;
     this.options = serverless.service.custom.client;
     this.aws = this.serverless.getProvider('aws');
@@ -53,7 +47,16 @@ class Client {
     };
   }
 
+  _validateConfig() {
+    const validationError = validateClient(this.serverless, this.options);
+    if (validationError) {
+      return BbPromise.reject(new this.error(validationError));
+    }
+  }
+
   _removeDeployedResources() {
+    this._validateConfig();
+
     const safetyDelay = 3000;
     const bucketName = this.options.bucketName;
 
@@ -81,6 +84,8 @@ class Client {
   }
 
   _processDeployment() {
+    this._validateConfig();
+
     const region = this.options.region || _.get(this.serverless, 'service.provider.region');
     const distributionFolder = _.get(
       this.serverless,
