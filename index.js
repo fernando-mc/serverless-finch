@@ -74,13 +74,21 @@ class Client {
       .then(exists => {
         if (exists) {
           this.serverless.cli.log(`Deleting all objects from bucket '${bucketName}' ...`);
-          bucketUtils.emptyBucket(this.aws, bucketName).then(() => {
-            this.serverless.cli.log(`Removing bucket '${bucketName}' ...`);
-            bucketUtils.deleteBucket(this.aws, bucketName);
-          });
+          return bucketUtils
+            .emptyBucket(this.aws, bucketName)
+            .then(() => {
+              this.serverless.cli.log(`Removing bucket '${bucketName}' ...`);
+              return bucketUtils.deleteBucket(this.aws, bucketName);
+            })
+            .then(() => {
+              this.serverless.cli.log(`Success! Your files have been removed from ${bucketName}`);
+            });
         } else {
           this.serverless.cli.log(`Bucket '${bucketName}' does not exist`);
         }
+      })
+      .catch(error => {
+        return BbPromise.reject(new this.error(error));
       });
   }
 
@@ -88,13 +96,12 @@ class Client {
     this._validateConfig();
 
     const region = this.options.region || _.get(this.serverless, 'service.provider.region');
-    const distributionFolder = _.get(
-      this.serverless,
-      'service.custom.client.distributionFolder',
-      path.join('client/dist')
-    );
+    const distributionFolder = this.options.distributionFolder || path.join('client/dist');
     const clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
     const bucketName = this.options.bucketName;
+    const headerSpec = this.options.objectHeaders;
+    const indexDoc = this.options.indexDocument || index.html;
+    const errorDoc = this.options.errorDocument || error.html;
 
     this.serverless.cli.log(`Deploying client in region '${region}'...`);
 
@@ -119,8 +126,6 @@ class Client {
       })
       .then(() => {
         this.serverless.cli.log(`Configuring bucket...`);
-        const indexDoc = this.serverless.service.custom.client.indexDocument || 'index.html';
-        const errorDoc = this.serverless.service.custom.client.errorDocument || 'error.html';
         return configure.configureBucket(this.aws, bucketName, indexDoc, errorDoc);
       })
       .then(() => {
@@ -133,7 +138,7 @@ class Client {
       })
       .then(() => {
         this.serverless.cli.log(`Uploading client files to bucket...`);
-        return uploadDirectory(this.aws, bucketName, clientPath, clientPath);
+        return uploadDirectory(this.aws, bucketName, clientPath, headerSpec);
       })
       .then(() => {
         this.serverless.cli.log(
