@@ -12,10 +12,11 @@ const uploadDirectory = require('./lib/upload');
 const validateClient = require('./lib/validate');
 
 class Client {
-  constructor(serverless, options) {
+  constructor(serverless, cliOptions) {
     this.error = serverless.classes.Error;
     this.serverless = serverless;
     this.options = serverless.service.custom.client;
+    this.cliOptions = cliOptions || {};
     this.aws = this.serverless.getProvider('aws');
 
     this.commands = {
@@ -68,23 +69,25 @@ class Client {
 
     return BbPromise.delay(safetyDelay)
       .then(() => {
-        this.serverless.cli.log(`Looking for bucket '${bucketName}' ...`);
+        this.serverless.cli.log(`Looking for bucket...`);
         return bucketUtils.bucketExists(this.aws, bucketName);
       })
       .then(exists => {
         if (exists) {
-          this.serverless.cli.log(`Deleting all objects from bucket '${bucketName}' ...`);
+          this.serverless.cli.log(`Deleting all objects from bucket...`);
           return bucketUtils
             .emptyBucket(this.aws, bucketName)
             .then(() => {
-              this.serverless.cli.log(`Removing bucket '${bucketName}' ...`);
+              this.serverless.cli.log(`Removing bucket...`);
               return bucketUtils.deleteBucket(this.aws, bucketName);
             })
             .then(() => {
-              this.serverless.cli.log(`Success! Your files have been removed from ${bucketName}`);
+              this.serverless.cli.log(
+                `Success! Your files have been removed and your bucket has been deleted`
+              );
             });
         } else {
-          this.serverless.cli.log(`Bucket '${bucketName}' does not exist`);
+          this.serverless.cli.log(`Bucket does not exist`);
         }
       })
       .catch(error => {
@@ -95,7 +98,10 @@ class Client {
   _processDeployment() {
     this._validateConfig();
 
-    const region = this.options.region || _.get(this.serverless, 'service.provider.region');
+    const region =
+      this.cliOptions.region ||
+      this.options.region ||
+      _.get(this.serverless, 'service.provider.region');
     const distributionFolder = this.options.distributionFolder || path.join('client/dist');
     const clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
     const bucketName = this.options.bucketName;
@@ -103,25 +109,25 @@ class Client {
     const indexDoc = this.options.indexDocument || index.html;
     const errorDoc = this.options.errorDocument || error.html;
 
-    this.serverless.cli.log(`Deploying client in region '${region}'...`);
+    this.serverless.cli.log(`Deploying client to bucket '${bucketName}' in region '${region}'...`);
 
-    this.serverless.cli.log(`Looking for bucket '${bucketName}' ...`);
+    this.serverless.cli.log(`Looking for bucket...`);
     return bucketUtils
       .bucketExists(this.aws, bucketName)
       .then(exists => {
         if (exists) {
-          this.serverless.cli.log(`Deleting all objects from bucket '${bucketName}' ...`);
+          this.serverless.cli.log(`Deleting all objects from bucket...`);
           return bucketUtils.emptyBucket(this.aws, bucketName).then(() => {
-            this.serverless.cli.log(`Removing bucket '${bucketName}' ...`);
+            this.serverless.cli.log(`Removing bucket...`);
             return bucketUtils.deleteBucket(this.aws, bucketName);
           });
         } else {
-          this.serverless.cli.log(`Bucket '${bucketName}' does not exist`);
+          this.serverless.cli.log(`Bucket does not exist`);
           return BbPromise.resolve();
         }
       })
       .then(() => {
-        this.serverless.cli.log(`Creating bucket ${bucketName}...`);
+        this.serverless.cli.log(`Creating bucket...`);
         return bucketUtils.createBucket(this.aws, bucketName);
       })
       .then(() => {
