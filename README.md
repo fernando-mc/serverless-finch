@@ -165,6 +165,11 @@ For guidelines on contributing to the project, please refer to our [Contributing
 
 ## Release Notes
 
+### v2.0.0 
+- Major refactor of entire codebase to move towards modularity and testability
+- Added the ability to set HTTP headers for objects in bucket ([Issue 24](https://github.com/fernando-mc/serverless-finch/issues/24))
+
+
 ### v1.4.\*
 - Added the ability to set custom index and error documents. ([Pull 20](https://github.com/fernando-mc/serverless-finch/pull/20) - [evanseeds](https://github.com/evanseeds))
 
