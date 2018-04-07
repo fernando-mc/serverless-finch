@@ -108,6 +108,8 @@ class Client {
     const headerSpec = this.options.objectHeaders;
     const indexDoc = this.options.indexDocument || index.html;
     const errorDoc = this.options.errorDocument || error.html;
+    const redirectAllRequestsTo = this.options.redirectAllRequestsTo || null;
+    const routingRules = this.options.routingRules || null;
 
     this.serverless.cli.log(`Deploying client to bucket '${bucketName}' in region '${region}'...`);
 
@@ -155,7 +157,14 @@ class Client {
           return BbPromise.resolve();
         }
         this.serverless.cli.log(`Configuring bucket...`);
-        return configure.configureBucket(this.aws, bucketName, indexDoc, errorDoc);
+        return configure.configureBucket(
+          this.aws,
+          bucketName,
+          indexDoc,
+          errorDoc,
+          redirectAllRequestsTo,
+          routingRules
+        );
       })
       .then(() => {
         if (this.cliOptions['policy-change'] === false) {
