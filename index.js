@@ -6,6 +6,7 @@ const _ = require('lodash');
 const BbPromise = require('bluebird');
 
 const bucketUtils = require('./lib/bucketUtils');
+const configure = require('./lib/configure');
 const regionUrls = require('./lib/resources/awsRegionUrls');
 const uploadDirectory = require('./lib/upload');
 const validateClient = require('./lib/validate');
@@ -120,15 +121,15 @@ class Client {
         this.serverless.cli.log(`Configuring bucket...`);
         const indexDoc = this.serverless.service.custom.client.indexDocument || 'index.html';
         const errorDoc = this.serverless.service.custom.client.errorDocument || 'error.html';
-        return bucketUtils.configureBucket(this.aws, bucketName, indexDoc, errorDoc);
+        return configure.configureBucket(this.aws, bucketName, indexDoc, errorDoc);
       })
       .then(() => {
         this.serverless.cli.log(`Configuring policy for bucket...`);
-        return bucketUtils.configurePolicyForBucket(this.aws, bucketName);
+        return configure.configurePolicyForBucket(this.aws, bucketName);
       })
       .then(() => {
         this.serverless.cli.log(`Configuring CORS policy for bucket...`);
-        return bucketUtils.configureCorsForBucket(this.aws, bucketName);
+        return configure.configureCorsForBucket(this.aws, bucketName);
       })
       .then(() => {
         this.serverless.cli.log(`Uploading client files to bucket...`);
