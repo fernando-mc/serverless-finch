@@ -45,10 +45,12 @@ echo "error page" >> client/dist/error.html
 **Third**, run the plugin, and visit your new website!
 
 ```
-serverless client deploy [--stage $STAGE] [--region $REGION]
+serverless client deploy [--region $REGION] [--no-delete-contents] [--no-config-change] [--no-policy-change] [--no-cors-change]
 ```
 
 The plugin should output the location of your newly deployed static site to the console.
+
+**Note:** *See [Command-line Parameters](#command-line-parameters) for details on command above*
 
 **WARNING:** The plugin will overwrite any data you have in the bucket name you set above if it already exists.
 
@@ -157,7 +159,73 @@ Headers with more specificity will take precedence over more general ones. For i
 
 ### Command-line Parameters
 
-No command-line parameters exist at this time.
+**--region**
+
+_optional_, defaults to value specified in `provider` section of `serverless.yml`
+
+```bash
+serverless client deploy --region $REGION
+```
+
+Use this parameter to specify what AWS region your bucket will be deployed in.
+
+---
+
+**--no-delete-contents**
+
+_optional_, default `false` (deletes contents by default)
+
+```bash
+serverless client deploy --no-delete-contents
+```
+
+Use this parameter if you do not want to delete the contents of your bucket before deployment. Files uploaded during deployment will still replace any corresponding files already in your bucket.
+
+**Note:** *If this option is specified, your bucket will also not be deleted before deployment (by default the bucket is removed before deployment).*
+
+---
+
+**--no-config-change**
+
+_optional_, default `false` (overwrites bucket configuration by default)
+
+```bash
+serverless client deploy --no-config-change
+```
+
+Use this parameter if you do not want to overwrite the bucket configuration when deploying to your bucket.
+
+**Note:** *If this option is specified, your bucket will also not be deleted before deployment (by default the bucket is removed before deployment).*
+
+---
+
+**--no-policy-change**
+
+_optional_, default `false` (overwrites bucket policy by default)
+
+```bash
+serverless client deploy --no-policy-change
+```
+
+Use this parameter if you do not want to overwrite the bucket policy when deploying to your bucket.
+
+**Note:** *If this option is specified, your bucket will also not be deleted before deployment (by default the bucket is removed before deployment).*
+
+---
+
+**--no-cors-change**
+
+_optional_, default `false` (overwrites bucket CORS configuration by default)
+
+```bash
+serverless client deploy --no-cors-change
+```
+
+Use this parameter if you do not want to overwrite the bucket CORS configuration when deploying to your bucket.
+
+**Note:** *If this option is specified, your bucket will also not be deleted before deployment (by default the bucket is removed before deployment).*
+
+---
 
 ## Contributing
 
@@ -168,7 +236,11 @@ For guidelines on contributing to the project, please refer to our [Contributing
 ### v2.0.0 
 - Major refactor of entire codebase to move towards modularity and testability
 - Added the ability to set HTTP headers for objects in bucket ([Issue 24](https://github.com/fernando-mc/serverless-finch/issues/24))
-
+- Added command-line options to disable (Initially implemented in [Pull 28](https://github.com/fernando-mc/serverless-finch/pull/28/files)):
+  + Bucket contents being deleted before deployment
+  + Bucket configuration being overwritten on deployment
+  + Bucket policy being overwritten on deployment
+  + Bucket CORS configuration being overwritten on deployment
 
 ### v1.4.\*
 - Added the ability to set custom index and error documents. ([Pull 20](https://github.com/fernando-mc/serverless-finch/pull/20) - [evanseeds](https://github.com/evanseeds))

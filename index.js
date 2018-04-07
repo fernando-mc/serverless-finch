@@ -111,13 +111,28 @@ class Client {
 
     this.serverless.cli.log(`Deploying client to bucket '${bucketName}' in region '${region}'...`);
 
+    const keepBucket =
+      this.cliOptions['delete-contents'] === false ||
+      this.cliOptions['config-change'] === false ||
+      this.cliOptions['policy-change'] === false ||
+      this.cliOptions['cors-change'] === false;
+
     this.serverless.cli.log(`Looking for bucket...`);
     return bucketUtils
       .bucketExists(this.aws, bucketName)
       .then(exists => {
         if (exists) {
+          if (this.cliOptions['delete-contents'] === false) {
+            this.serverless.cli.log(`Keeping current bucket contents...`);
+            return BbPromise.resolve();
+          }
+
           this.serverless.cli.log(`Deleting all objects from bucket...`);
           return bucketUtils.emptyBucket(this.aws, bucketName).then(() => {
+            if (keepBucket) {
+              this.serverless.cli.log(`Keeping existing bucket...`);
+              return BbPromise.resolve();
+            }
             this.serverless.cli.log(`Removing bucket...`);
             return bucketUtils.deleteBucket(this.aws, bucketName);
           });
@@ -127,19 +142,35 @@ class Client {
         }
       })
       .then(() => {
+        if (keepBucket) {
+          this.serverless.cli.log(`Skipping bucket creation...`);
+          return BbPromise.resolve();
+        }
         this.serverless.cli.log(`Creating bucket...`);
         return bucketUtils.createBucket(this.aws, bucketName);
       })
       .then(() => {
+        if (this.cliOptions['config-change'] === false) {
+          this.serverless.cli.log(`Retaining existing bucket configuration...`);
+          return BbPromise.resolve();
+        }
         this.serverless.cli.log(`Configuring bucket...`);
         return configure.configureBucket(this.aws, bucketName, indexDoc, errorDoc);
       })
       .then(() => {
+        if (this.cliOptions['policy-change'] === false) {
+          this.serverless.cli.log(`Retaining existing bucket policy...`);
+          return BbPromise.resolve();
+        }
         this.serverless.cli.log(`Configuring policy for bucket...`);
         return configure.configurePolicyForBucket(this.aws, bucketName);
       })
       .then(() => {
-        this.serverless.cli.log(`Configuring CORS policy for bucket...`);
+        if (this.cliOptions['cors-change'] === false) {
+          this.serverless.cli.log(`Retaining existing bucket CORS configuration...`);
+          return BbPromise.resolve();
+        }
+        this.serverless.cli.log(`Configuring CORS for bucket...`);
         return configure.configureCorsForBucket(this.aws, bucketName);
       })
       .then(() => {
