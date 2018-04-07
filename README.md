@@ -4,7 +4,7 @@
 [![npm](https://img.shields.io/npm/v/serverless-finch.svg)](https://www.npmjs.com/package/serverless-finch)
 [![license](https://img.shields.io/github/license/fernando-mc/serverless-finch.svg)](https://github.com/fernando-mc/serverless-finch/blob/master/LICENSE)
 
-A Serverless Framework plugin for deployment of static website assests of your Serverless project to AWS S3.
+A Serverless Framework plugin for deployment of static website assets of your Serverless project to AWS S3.
 
 ## Installation
 
