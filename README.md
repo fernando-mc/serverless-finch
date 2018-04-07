@@ -304,6 +304,7 @@ For guidelines on contributing to the project, please refer to our [Contributing
   + Bucket configuration being overwritten on deployment
   + Bucket policy being overwritten on deployment
   + Bucket CORS configuration being overwritten on deployment
+- Added validation checks for all configuration options 
 
 ### v1.4.\*
 - Added the ability to set custom index and error documents. ([Pull 20](https://github.com/fernando-mc/serverless-finch/pull/20) - [evanseeds](https://github.com/evanseeds))
