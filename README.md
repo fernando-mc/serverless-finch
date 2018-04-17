@@ -230,7 +230,12 @@ _optional_, defaults to value specified in `provider` section of `serverless.yml
 serverless client deploy --region $REGION
 ```
 
-Use this parameter to specify what AWS region your bucket will be deployed in.
+Use this parameter to specify what AWS region your bucket will be deployed in. 
+
+This option will always determine the deployment region if specified. If `region`
+is not specified via the CLI, we use the `region` option specified under 
+custom/client in `serverless.yml`. If that is not specified, we use the Serverless 
+region specified under `provider` in `serverless.yml`.
 
 ---
 
@@ -244,8 +249,6 @@ serverless client deploy --no-delete-contents
 
 Use this parameter if you do not want to delete the contents of your bucket before deployment. Files uploaded during deployment will still replace any corresponding files already in your bucket.
 
-**Note:** *If this option is specified, your bucket will also not be deleted before deployment (by default the bucket is removed before deployment).*
-
 ---
 
 **--no-config-change**
@@ -257,8 +260,6 @@ serverless client deploy --no-config-change
 ```
 
 Use this parameter if you do not want to overwrite the bucket configuration when deploying to your bucket.
-
-**Note:** *If this option is specified, your bucket will also not be deleted before deployment (by default the bucket is removed before deployment).*
 
 ---
 
@@ -272,8 +273,6 @@ serverless client deploy --no-policy-change
 
 Use this parameter if you do not want to overwrite the bucket policy when deploying to your bucket.
 
-**Note:** *If this option is specified, your bucket will also not be deleted before deployment (by default the bucket is removed before deployment).*
-
 ---
 
 **--no-cors-change**
@@ -285,8 +284,6 @@ serverless client deploy --no-cors-change
 ```
 
 Use this parameter if you do not want to overwrite the bucket CORS configuration when deploying to your bucket.
-
-**Note:** *If this option is specified, your bucket will also not be deleted before deployment (by default the bucket is removed before deployment).*
 
 ---
 
@@ -306,6 +303,7 @@ For guidelines on contributing to the project, please refer to our [Contributing
   + Bucket policy being overwritten on deployment
   + Bucket CORS configuration being overwritten on deployment
 - Added validation checks for all configuration options 
+- Removed "stage" command-line option. It was not being used for anything
 
 ### v1.4.\*
 - Added the ability to set custom index and error documents. ([Pull 20](https://github.com/fernando-mc/serverless-finch/pull/20) - [evanseeds](https://github.com/evanseeds))

@@ -98,10 +98,16 @@ class Client {
   _processDeployment() {
     this._validateConfig();
 
+    // region is set based on the following order of precedence:
+    // If specified, the CLI option is used
+    // If region is not specified via the CLI, we use the region option specified
+    //   under custom/client in serverless.yml
+    // Otherwise, use the Serverless region specified under provider in serverless.yml
     const region =
       this.cliOptions.region ||
       this.options.region ||
       _.get(this.serverless, 'service.provider.region');
+
     const distributionFolder = this.options.distributionFolder || path.join('client/dist');
     const clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
     const bucketName = this.options.bucketName;
@@ -113,43 +119,23 @@ class Client {
 
     this.serverless.cli.log(`Deploying client to bucket '${bucketName}' in region '${region}'...`);
 
-    const keepBucket =
-      this.cliOptions['delete-contents'] === false ||
-      this.cliOptions['config-change'] === false ||
-      this.cliOptions['policy-change'] === false ||
-      this.cliOptions['cors-change'] === false;
-
     this.serverless.cli.log(`Looking for bucket...`);
     return bucketUtils
       .bucketExists(this.aws, bucketName)
       .then(exists => {
         if (exists) {
+          this.serverless.cli.log(`Bucket found...`);
           if (this.cliOptions['delete-contents'] === false) {
             this.serverless.cli.log(`Keeping current bucket contents...`);
             return BbPromise.resolve();
           }
 
           this.serverless.cli.log(`Deleting all objects from bucket...`);
-          return bucketUtils.emptyBucket(this.aws, bucketName).then(() => {
-            if (keepBucket) {
-              this.serverless.cli.log(`Keeping existing bucket...`);
-              return BbPromise.resolve();
-            }
-            this.serverless.cli.log(`Removing bucket...`);
-            return bucketUtils.deleteBucket(this.aws, bucketName);
-          });
+          return bucketUtils.emptyBucket(this.aws, bucketName);
         } else {
-          this.serverless.cli.log(`Bucket does not exist`);
-          return BbPromise.resolve();
+          this.serverless.cli.log(`Bucket does not exist. Creating bucket...`);
+          return bucketUtils.createBucket(this.aws, bucketName);
         }
-      })
-      .then(() => {
-        if (keepBucket) {
-          this.serverless.cli.log(`Skipping bucket creation...`);
-          return BbPromise.resolve();
-        }
-        this.serverless.cli.log(`Creating bucket...`);
-        return bucketUtils.createBucket(this.aws, bucketName);
       })
       .then(() => {
         if (this.cliOptions['config-change'] === false) {
