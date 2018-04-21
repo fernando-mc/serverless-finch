@@ -54,7 +54,7 @@ class Client {
     try {
       validateClient(this.serverless, this.options);
     } catch (e) {
-      return BbPromise.reject(new this.error(e));
+      return BbPromise.reject(`Serverless Finch configuration errors:\n- ${e.join('\n- ')}`);
     }
     return BbPromise.resolve();
   }
