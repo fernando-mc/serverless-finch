@@ -1,37 +1,24 @@
 'use strict';
 
 const path = require('path');
-const BbPromise = require('bluebird');
-const async = require('async');
-const _ = require('lodash');
-const mime = require('mime');
-const fs = require('fs');
 
-// per http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints
-const regionToUrlRootMap = region =>
-  ({
-    'us-east-2': 's3-website.us-east-2.amazonaws.com',
-    'us-east-1': 's3-website-us-east-1.amazonaws.com',
-    'us-west-1': 's3-website-us-west-1.amazonaws.com',
-    'us-west-2': 's3-website-us-west-2.amazonaws.com',
-    'ca-central-1': 's3-website.ca-central-1.amazonaws.com',
-    'ap-south-1': 's3-website.ap-south-1.amazonaws.com',
-    'ap-northeast-2': 's3-website.ap-northeast-2.amazonaws.com',
-    'ap-southeast-1': 's3-website-ap-southeast-1.amazonaws.com',
-    'ap-southeast-2': 's3-website-ap-southeast-2.amazonaws.com',
-    'ap-northeast-1': 's3-website-ap-northeast-1.amazonaws.com',
-    'eu-central-1': 's3-website.eu-central-1.amazonaws.com',
-    'eu-west-1': 's3-website-eu-west-1.amazonaws.com',
-    'eu-west-2': 's3-website.eu-west-2.amazonaws.com',
-    'eu-west-3': 's3-website.eu-west-3.amazonaws.com',
-    'sa-east-1': 's3-website-sa-east-1.amazonaws.com'
-  }[region]);
+const _ = require('lodash');
+const BbPromise = require('bluebird');
+const Confirm = require('prompt-confirm');
+
+const bucketUtils = require('./lib/bucketUtils');
+const configure = require('./lib/configure');
+const regionUrls = require('./lib/resources/awsRegionUrls');
+const uploadDirectory = require('./lib/upload');
+const validateClient = require('./lib/validate');
 
 class Client {
-  constructor(serverless, options) {
+  constructor(serverless, cliOptions) {
+    this.error = serverless.classes.Error;
     this.serverless = serverless;
-    this.provider = 'aws';
-    this.aws = this.serverless.getProvider(this.provider);
+    this.options = serverless.service.custom.client;
+    this.cliOptions = cliOptions || {};
+    this.aws = this.serverless.getProvider('aws');
 
     this.commands = {
       client: {
@@ -52,13 +39,10 @@ class Client {
 
     this.hooks = {
       'client:client': () => {
-        this.serverless.cli.log(this.commands.client.usage);
+        serverless.cli.log(this.commands.client.usage);
       },
-
       'client:deploy:deploy': () => {
-        this.stage = options.stage || _.get(serverless, 'service.provider.stage');
-        this.region = options.region || _.get(serverless, 'service.provider.region');
-        this._validateAndPrepare().then(this._processDeployment.bind(this));
+        this._processDeployment();
       },
       'client:remove:remove': () => {
         this._removeDeployedResources();
@@ -66,262 +50,175 @@ class Client {
     };
   }
 
-  // Shared functions
-
-  listBuckets() {
-    return this.aws.request('S3', 'listBuckets', {}).bind(this);
-  }
-
-  findBucket(data) {
-    data.Buckets.forEach(
-      function(bucket) {
-        if (bucket.Name === this.bucketName) {
-          this.bucketExists = true;
-          this.serverless.cli.log(`Bucket ${this.bucketName} exists`);
-        }
-      }.bind(this)
-    );
-  }
-
-  listObjectsInBucket() {
-    if (!this.bucketExists) return BbPromise.resolve();
-
-    this.serverless.cli.log(`Listing objects in bucket ${this.bucketName}...`);
-
-    let params = {
-      Bucket: this.bucketName
-    };
-
-    return this.aws.request('S3', 'listObjectsV2', params);
-  }
-
-  deleteObjectsFromBucket(data) {
-    if (!this.bucketExists) return BbPromise.resolve();
-
-    this.serverless.cli.log(`Deleting all objects from bucket ${this.bucketName}...`);
-
-    if (!data.Contents[0]) {
-      return BbPromise.resolve();
-    } else {
-      let Objects = _.map(data.Contents, function(content) {
-        return _.pick(content, 'Key');
-      });
-
-      let params = {
-        Bucket: this.bucketName,
-        Delete: { Objects: Objects }
-      };
-
-      return this.aws.request('S3', 'deleteObjects', params);
+  _validateConfig() {
+    try {
+      validateClient(this.serverless, this.options);
+    } catch (e) {
+      return BbPromise.reject(`Serverless Finch configuration errors:\n- ${e.join('\n- ')}`);
     }
-  }
-
-  // Hook handlers
-
-  _removeDeployedResources() {
-    this.bucketName = this.serverless.service.custom.client.bucketName;
-    var safetyDelay = 3000;
-    this.serverless.cli.log(
-      `Preparing to empty and remove bucket ${this.bucketName}, waiting for ${safetyDelay /
-        1000} seconds...`
-    );
-
-    function deleteBucket() {
-      this.serverless.cli.log(`Removing bucket ${this.bucketName}...`);
-      let params = {
-        Bucket: this.bucketName
-      };
-      return this.aws.request('S3', 'deleteBucket', params);
-    }
-
-    return BbPromise.delay(safetyDelay)
-      .bind(this)
-      .then(this.listBuckets)
-      .then(this.findBucket)
-      .then(this.listObjectsInBucket)
-      .then(this.deleteObjectsFromBucket)
-      .then(deleteBucket);
-  }
-
-  _validateAndPrepare() {
-    const Utils = this.serverless.utils;
-    const Error = this.serverless.classes.Error;
-
-    const distributionFolder = _.get(
-      this.serverless,
-      'service.custom.client.distributionFolder',
-      path.join('client', 'dist')
-    );
-    const clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
-
-    if (!Utils.dirExistsSync(clientPath)) {
-      return BbPromise.reject(
-        new Error('Could not find ' + clientPath + ' folder in your project root.')
-      );
-    }
-
-    if (
-      !this.serverless.service.custom ||
-      !this.serverless.service.custom.client ||
-      !this.serverless.service.custom.client.bucketName
-    ) {
-      return BbPromise.reject(
-        new Error('Please specify a bucket name for the client in serverless.yml.')
-      );
-    }
-
-    this.bucketName = this.serverless.service.custom.client.bucketName;
-    this.clientPath = clientPath;
-
     return BbPromise.resolve();
   }
 
-  _processDeployment() {
-    this.serverless.cli.log(
-      'Deploying client to stage "' + this.stage + '" in region "' + this.region + '"...'
-    );
+  _removeDeployedResources() {
+    let bucketName;
 
-    function createBucket() {
-      if (this.bucketExists) return BbPromise.resolve();
-      this.serverless.cli.log(`Creating bucket ${this.bucketName}...`);
-
-      let params = {
-        Bucket: this.bucketName
-      };
-
-      return this.aws.request('S3', 'createBucket', params);
-    }
-
-    function configureBucket() {
-      this.serverless.cli.log(`Configuring website bucket ${this.bucketName}...`);
-
-      const indexDoc = this.serverless.service.custom.client.indexDocument || 'index.html';
-      const errorDoc = this.serverless.service.custom.client.errorDocument || 'error.html';
-
-      let params = {
-        Bucket: this.bucketName,
-        WebsiteConfiguration: {
-          IndexDocument: { Suffix: indexDoc },
-          ErrorDocument: { Key: errorDoc }
+    return this._validateConfig()
+      .then(() => {
+        bucketName = this.options.bucketName;
+        return new Confirm(`Are you sure you want to delete bucket '${bucketName}'?`).run();
+      })
+      .then(goOn => {
+        if (goOn) {
+          this.serverless.cli.log(`Looking for bucket...`);
+          return bucketUtils.bucketExists(this.aws, bucketName).then(exists => {
+            if (exists) {
+              this.serverless.cli.log(`Deleting all objects from bucket...`);
+              return bucketUtils
+                .emptyBucket(this.aws, bucketName)
+                .then(() => {
+                  this.serverless.cli.log(`Removing bucket...`);
+                  return bucketUtils.deleteBucket(this.aws, bucketName);
+                })
+                .then(() => {
+                  this.serverless.cli.log(
+                    `Success! Your files have been removed and your bucket has been deleted`
+                  );
+                });
+            } else {
+              this.serverless.cli.log(`Bucket does not exist`);
+            }
+          });
         }
-      };
-
-      return this.aws.request('S3', 'putBucketWebsite', params);
-    }
-
-    function configurePolicyForBucket() {
-      this.serverless.cli.log(`Configuring policy for bucket ${this.bucketName}...`);
-
-      let policy = {
-        Version: '2008-10-17',
-        Id: 'Policy1392681112290',
-        Statement: [
-          {
-            Sid: 'Stmt1392681101677',
-            Effect: 'Allow',
-            Principal: {
-              AWS: '*'
-            },
-            Action: 's3:GetObject',
-            Resource: 'arn:aws:s3:::' + this.bucketName + '/*'
-          }
-        ]
-      };
-
-      let params = {
-        Bucket: this.bucketName,
-        Policy: JSON.stringify(policy)
-      };
-
-      return this.aws.request('S3', 'putBucketPolicy', params);
-    }
-
-    function configureCorsForBucket() {
-      this.serverless.cli.log(`Configuring CORS policy for bucket ${this.bucketName}...`);
-
-      let putPostDeleteRule = {
-        AllowedMethods: ['PUT', 'POST', 'DELETE'],
-        AllowedOrigins: ['https://*.amazonaws.com'],
-        AllowedHeaders: ['*'],
-        MaxAgeSeconds: 0
-      };
-
-      let getRule = {
-        AllowedMethods: ['GET'],
-        AllowedOrigins: ['*'],
-        AllowedHeaders: ['*'],
-        MaxAgeSeconds: 0
-      };
-
-      let params = {
-        Bucket: this.bucketName,
-        CORSConfiguration: {
-          CORSRules: [putPostDeleteRule, getRule]
-        }
-      };
-
-      return this.aws.request('S3', 'putBucketCors', params);
-    }
-
-    return this.listBuckets()
-      .then(this.findBucket)
-      .then(this.listObjectsInBucket)
-      .then(this.deleteObjectsFromBucket)
-      .then(createBucket)
-      .then(configureBucket)
-      .then(configurePolicyForBucket)
-      .then(configureCorsForBucket)
-      .then(function() {
-        return this._uploadDirectory(this.clientPath);
+        this.serverless.cli.log('Bucket not removed');
+        return BbPromise.resolve();
+      })
+      .catch(error => {
+        return BbPromise.reject(new this.error(error));
       });
   }
 
-  _uploadDirectory(directoryPath) {
-    let _this = this,
-      readDirectory = _.partial(fs.readdir, directoryPath);
+  _processDeployment() {
+    let region,
+      distributionFolder,
+      clientPath,
+      bucketName,
+      headerSpec,
+      indexDoc,
+      errorDoc,
+      redirectAllRequestsTo,
+      routingRules;
 
-    async.waterfall([
-      readDirectory,
-      function(files) {
-        files = _.map(files, function(file) {
-          return path.join(directoryPath, file);
-        });
+    return this._validateConfig()
+      .then(() => {
+        // region is set based on the following order of precedence:
+        // If specified, the CLI option is used
+        // If region is not specified via the CLI, we use the region option specified
+        //   under custom/client in serverless.yml
+        // Otherwise, use the Serverless region specified under provider in serverless.yml
+        region =
+          this.cliOptions.region ||
+          this.options.region ||
+          _.get(this.serverless, 'service.provider.region');
 
-        async.each(files, function(path) {
-          fs.stat(
-            path,
-            _.bind(function(err, stats) {
-              return stats.isDirectory() ? _this._uploadDirectory(path) : _this._uploadFile(path);
-            }, _this)
-          );
-        });
-      }
-    ]);
-  }
+        distributionFolder = this.options.distributionFolder || path.join('client/dist');
+        clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
+        bucketName = this.options.bucketName;
+        headerSpec = this.options.objectHeaders;
+        indexDoc = this.options.indexDocument || index.html;
+        errorDoc = this.options.errorDocument || error.html;
+        redirectAllRequestsTo = this.options.redirectAllRequestsTo || null;
+        routingRules = this.options.routingRules || null;
 
-  _uploadFile(filePath) {
-    let _this = this,
-      fileKey = filePath
-        .replace(_this.clientPath, '')
-        .substr(1)
-        .replace(/\\/g, '/'),
-      urlRoot = regionToUrlRootMap(_this.region);
+        const deployDescribe = ['This deployment will:'];
 
-    this.serverless.cli.log(`Uploading file ${fileKey} to bucket ${_this.bucketName}...`);
-    this.serverless.cli.log('If successful this should be deployed at:');
-    this.serverless.cli.log(`http://${_this.bucketName}.${urlRoot}/${fileKey}`);
+        if (this.cliOptions['delete-contents']) {
+          deployDescribe.push(`- Remove all existing files from bucket '${bucketName}'`);
+        }
+        deployDescribe.push(
+          `- Upload all files from '${distributionFolder}' to bucket '${bucketName}'`
+        );
+        if (this.cliOptions['config-change'] !== false) {
+          deployDescribe.push(`- Set (and overwrite) bucket '${bucketName}' configuration`);
+        }
+        if (this.cliOptions['policy-change'] !== false) {
+          deployDescribe.push(`- Set (and overwrite) bucket '${bucketName}' bucket policy`);
+        }
+        if (this.cliOptions['cors-change'] !== false) {
+          deployDescribe.push(`- Set (and overwrite) bucket '${bucketName}' CORS policy`);
+        }
 
-    fs.readFile(filePath, function(err, fileBuffer) {
-      let params = {
-        Bucket: _this.bucketName,
-        Key: fileKey,
-        Body: fileBuffer,
-        ContentType: mime.lookup(filePath)
-      };
+        deployDescribe.forEach(m => this.serverless.cli.log(m));
+        return new Confirm(`Do you want to proceed?`).run();
+      })
+      .then(goOn => {
+        if (goOn) {
+          this.serverless.cli.log(`Looking for bucket...`);
+          return bucketUtils
+            .bucketExists(this.aws, bucketName)
+            .then(exists => {
+              if (exists) {
+                this.serverless.cli.log(`Bucket found...`);
+                if (this.cliOptions['delete-contents'] === false) {
+                  this.serverless.cli.log(`Keeping current bucket contents...`);
+                  return BbPromise.resolve();
+                }
 
-      // TODO: remove browser caching
-      return _this.aws.request('S3', 'putObject', params);
-    });
+                this.serverless.cli.log(`Deleting all objects from bucket...`);
+                return bucketUtils.emptyBucket(this.aws, bucketName);
+              } else {
+                this.serverless.cli.log(`Bucket does not exist. Creating bucket...`);
+                return bucketUtils.createBucket(this.aws, bucketName);
+              }
+            })
+            .then(() => {
+              if (this.cliOptions['config-change'] === false) {
+                this.serverless.cli.log(`Retaining existing bucket configuration...`);
+                return BbPromise.resolve();
+              }
+              this.serverless.cli.log(`Configuring bucket...`);
+              return configure.configureBucket(
+                this.aws,
+                bucketName,
+                indexDoc,
+                errorDoc,
+                redirectAllRequestsTo,
+                routingRules
+              );
+            })
+            .then(() => {
+              if (this.cliOptions['policy-change'] === false) {
+                this.serverless.cli.log(`Retaining existing bucket policy...`);
+                return BbPromise.resolve();
+              }
+              this.serverless.cli.log(`Configuring policy for bucket...`);
+              return configure.configurePolicyForBucket(this.aws, bucketName);
+            })
+            .then(() => {
+              if (this.cliOptions['cors-change'] === false) {
+                this.serverless.cli.log(`Retaining existing bucket CORS configuration...`);
+                return BbPromise.resolve();
+              }
+              this.serverless.cli.log(`Configuring CORS for bucket...`);
+              return configure.configureCorsForBucket(this.aws, bucketName);
+            })
+            .then(() => {
+              this.serverless.cli.log(`Uploading client files to bucket...`);
+              return uploadDirectory(this.aws, bucketName, clientPath, headerSpec);
+            })
+            .then(() => {
+              this.serverless.cli.log(
+                `Success! Your site should be available at http://${bucketName}.${
+                  regionUrls[region]
+                }/`
+              );
+            });
+        }
+        this.serverless.cli.log('Deployment cancelled');
+        return BbPromise.resolve();
+      })
+      .catch(error => {
+        return BbPromise.reject(new this.error(error));
+      });
   }
 }
 
