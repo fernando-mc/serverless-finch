@@ -134,16 +134,16 @@ custom:
     ...
     objectHeaders:
       ALL_OBJECTS:
-        - headerName: [header-name]
-          headerValue: [header-value]
+        - name: [header-name]
+          value: [header-value]
         ...
       specific-directory/:
-        - headerName: [header-name]
-          headerValue: [header-value]
+        - name: [header-name]
+          value: [header-value]
         ...
       specific-file.ext:
-        - headerName: [header-name]
-          headerValue: [header-value]
+        - name: [header-name]
+          value: [header-value]
         ...
       ... [more file- or folder-specific rules]
     ...
@@ -151,7 +151,7 @@ custom:
 
 Use the `objectHeaders` option to set HTTP response headers be sent to clients requesting uploaded files from your website. 
 
-Headers may be specified globally for all files in the bucket by adding a `headerName`, `headerValue` pair to the `ALL_OBJECTS` property of the `objectHeaders` option. They may also be specified for specific folders or files within your site by specifying properties with names like `specific-directory/` (trailing slash required to indicate folder) or `specific-file.ext`, where the folder and/or file paths are relative to `distributionFolder`. 
+Headers may be specified globally for all files in the bucket by adding a `name`, `value` pair to the `ALL_OBJECTS` property of the `objectHeaders` option. They may also be specified for specific folders or files within your site by specifying properties with names like `specific-directory/` (trailing slash required to indicate folder) or `specific-file.ext`, where the folder and/or file paths are relative to `distributionFolder`. 
 
 Headers with more specificity will take precedence over more general ones. For instance, if 'Cache-Control' was set to 'max-age=100' in `ALL_OBJECTS` and to 'max-age=500' in `my/folder/`, the files in `my/folder/` would get a header of 'Cache-Control: max-age=500'.
 

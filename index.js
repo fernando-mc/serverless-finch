@@ -51,19 +51,22 @@ class Client {
   }
 
   _validateConfig() {
-    const validationError = validateClient(this.serverless, this.options);
-    if (validationError) {
-      return BbPromise.reject(new this.error(validationError));
+    try {
+      validateClient(this.serverless, this.options);
+    } catch (e) {
+      return BbPromise.reject(`Serverless Finch configuration errors:\n- ${e.join('\n- ')}`);
     }
+    return BbPromise.resolve();
   }
 
   _removeDeployedResources() {
-    this._validateConfig();
+    let bucketName;
 
-    const bucketName = this.options.bucketName;
-
-    return new Confirm(`Are you sure you want to delete bucket '${bucketName}'?`)
-      .run()
+    return this._validateConfig()
+      .then(() => {
+        bucketName = this.options.bucketName;
+        return new Confirm(`Are you sure you want to delete bucket '${bucketName}'?`).run();
+      })
       .then(goOn => {
         if (goOn) {
           this.serverless.cli.log(`Looking for bucket...`);
@@ -95,49 +98,58 @@ class Client {
   }
 
   _processDeployment() {
-    this._validateConfig();
+    let region,
+      distributionFolder,
+      clientPath,
+      bucketName,
+      headerSpec,
+      indexDoc,
+      errorDoc,
+      redirectAllRequestsTo,
+      routingRules;
 
-    // region is set based on the following order of precedence:
-    // If specified, the CLI option is used
-    // If region is not specified via the CLI, we use the region option specified
-    //   under custom/client in serverless.yml
-    // Otherwise, use the Serverless region specified under provider in serverless.yml
-    const region =
-      this.cliOptions.region ||
-      this.options.region ||
-      _.get(this.serverless, 'service.provider.region');
+    return this._validateConfig()
+      .then(() => {
+        // region is set based on the following order of precedence:
+        // If specified, the CLI option is used
+        // If region is not specified via the CLI, we use the region option specified
+        //   under custom/client in serverless.yml
+        // Otherwise, use the Serverless region specified under provider in serverless.yml
+        region =
+          this.cliOptions.region ||
+          this.options.region ||
+          _.get(this.serverless, 'service.provider.region');
 
-    const distributionFolder = this.options.distributionFolder || path.join('client/dist');
-    const clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
-    const bucketName = this.options.bucketName;
-    const headerSpec = this.options.objectHeaders;
-    const indexDoc = this.options.indexDocument || index.html;
-    const errorDoc = this.options.errorDocument || error.html;
-    const redirectAllRequestsTo = this.options.redirectAllRequestsTo || null;
-    const routingRules = this.options.routingRules || null;
+        distributionFolder = this.options.distributionFolder || path.join('client/dist');
+        clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
+        bucketName = this.options.bucketName;
+        headerSpec = this.options.objectHeaders;
+        indexDoc = this.options.indexDocument || index.html;
+        errorDoc = this.options.errorDocument || error.html;
+        redirectAllRequestsTo = this.options.redirectAllRequestsTo || null;
+        routingRules = this.options.routingRules || null;
 
-    const deployDescribe = ['This deployment will:'];
+        const deployDescribe = ['This deployment will:'];
 
-    if (this.cliOptions['delete-contents']) {
-      deployDescribe.push(`- Remove all existing files from bucket '${bucketName}'`);
-    }
-    deployDescribe.push(
-      `- Upload all files from '${distributionFolder}' to bucket '${bucketName}'`
-    );
-    if (this.cliOptions['config-change'] !== false) {
-      deployDescribe.push(`- Set (and overwrite) bucket '${bucketName}' configuration`);
-    }
-    if (this.cliOptions['policy-change'] !== false) {
-      deployDescribe.push(`- Set (and overwrite) bucket '${bucketName}' bucket policy`);
-    }
-    if (this.cliOptions['cors-change'] !== false) {
-      deployDescribe.push(`- Set (and overwrite) bucket '${bucketName}' CORS policy`);
-    }
+        if (this.cliOptions['delete-contents']) {
+          deployDescribe.push(`- Remove all existing files from bucket '${bucketName}'`);
+        }
+        deployDescribe.push(
+          `- Upload all files from '${distributionFolder}' to bucket '${bucketName}'`
+        );
+        if (this.cliOptions['config-change'] !== false) {
+          deployDescribe.push(`- Set (and overwrite) bucket '${bucketName}' configuration`);
+        }
+        if (this.cliOptions['policy-change'] !== false) {
+          deployDescribe.push(`- Set (and overwrite) bucket '${bucketName}' bucket policy`);
+        }
+        if (this.cliOptions['cors-change'] !== false) {
+          deployDescribe.push(`- Set (and overwrite) bucket '${bucketName}' CORS policy`);
+        }
 
-    deployDescribe.forEach(m => this.serverless.cli.log(m));
-
-    return new Confirm(`Do you want to proceed?`)
-      .run()
+        deployDescribe.forEach(m => this.serverless.cli.log(m));
+        return new Confirm(`Do you want to proceed?`).run();
+      })
       .then(goOn => {
         if (goOn) {
           this.serverless.cli.log(`Looking for bucket...`);
