@@ -293,7 +293,7 @@ For guidelines on contributing to the project, please refer to our [Contributing
 
 ## Release Notes
 
-### v2.0.0 
+### v2.0.\* 
 - Major refactor of entire codebase to move towards modularity and testability
 - Added the ability to set HTTP headers for objects in bucket ([Issue 24](https://github.com/fernando-mc/serverless-finch/issues/24))
 - Added the ability to set redirect and routing options for the website (Initially implemented in [Pull 23](https://github.com/fernando-mc/serverless-finch/pull/23))
@@ -330,5 +330,6 @@ For guidelines on contributing to the project, please refer to our [Contributing
 - [daguix](https://github.com/daguix)
 - [shentonfreude](https://github.com/shentonfreude)
 - [evanseeds](https://github.com/evanseeds)
+- [wzedi](https://github.com/wzedi)
 
 Forked from the [**serverless-client-s3**](https://github.com/serverless/serverless-client-s3/)
