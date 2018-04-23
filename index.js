@@ -124,8 +124,8 @@ class Client {
         clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
         bucketName = this.options.bucketName;
         headerSpec = this.options.objectHeaders;
-        indexDoc = this.options.indexDocument || index.html;
-        errorDoc = this.options.errorDocument || error.html;
+        indexDoc = this.options.indexDocument || "index.html";
+        errorDoc = this.options.errorDocument || "error.html";
         redirectAllRequestsTo = this.options.redirectAllRequestsTo || null;
         routingRules = this.options.routingRules || null;
 
