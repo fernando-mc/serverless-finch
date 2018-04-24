@@ -287,6 +287,18 @@ Use this parameter if you do not want to overwrite the bucket CORS configuration
 
 ---
 
+**--no-confirm**
+
+_optional_, default `false` (disables confirmation prompt)
+
+```bash
+serverless client deploy --no-confirm
+```
+
+Use this parameter if you do not want a confirmation prompt to interrupt automated builds.
+
+---
+
 ## Contributing
 
 For guidelines on contributing to the project, please refer to our [Contributing](docs/CONTRIBUTING.md) page. 

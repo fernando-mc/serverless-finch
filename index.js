@@ -65,7 +65,7 @@ class Client {
     return this._validateConfig()
       .then(() => {
         bucketName = this.options.bucketName;
-        return new Confirm(`Are you sure you want to delete bucket '${bucketName}'?`).run();
+        return this.cliOptions.confirm === false ? true : new Confirm(`Are you sure you want to delete bucket '${bucketName}'?`).run();
       })
       .then(goOn => {
         if (goOn) {
@@ -148,7 +148,7 @@ class Client {
         }
 
         deployDescribe.forEach(m => this.serverless.cli.log(m));
-        return new Confirm(`Do you want to proceed?`).run();
+        return this.cliOptions.confirm === false ? true : new Confirm(`Do you want to proceed?`).run();
       })
       .then(goOn => {
         if (goOn) {
