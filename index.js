@@ -42,10 +42,10 @@ class Client {
         serverless.cli.log(this.commands.client.usage);
       },
       'client:deploy:deploy': () => {
-        this._processDeployment();
+        return this._processDeployment();
       },
       'client:remove:remove': () => {
-        this._removeDeployedResources();
+        return this._removeDeployedResources();
       }
     };
   }
