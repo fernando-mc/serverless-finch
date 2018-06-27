@@ -195,12 +195,9 @@ class Client {
                 this.serverless.cli.log(`Retaining existing bucket policy...`);
                 return BbPromise.resolve();
               }
-              const bucketPolicyFile = this.serverless.service.custom.client.bucketPolicyFile;
-              let customPolicy = null;
-              if (bucketPolicyFile) {
-                customPolicy = JSON.parse(fs.readFileSync(bucketPolicyFile));
-              }
               this.serverless.cli.log(`Configuring policy for bucket...`);
+              const bucketPolicyFile = this.serverless.service.custom.client.bucketPolicyFile;
+              const customPolicy = bucketPolicyFile && JSON.parse(fs.readFileSync(bucketPolicyFile));
               return configure.configurePolicyForBucket(this.aws, bucketName, customPolicy);
             })
             .then(() => {
