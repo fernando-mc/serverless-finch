@@ -196,18 +196,12 @@ class Client {
                 return BbPromise.resolve();
               }
               const bucketPolicyFile = this.serverless.service.custom.client.bucketPolicyFile;
-              let policy = null;
+              let customPolicy = null;
               if (bucketPolicyFile) {
-                try {
-                  policy = JSON.parse(fs.readFileSync(bucketPolicyFile));
-                } catch (e) {
-                  this.serverless.cli.log(
-                    `Failed to read and/or process specified policy, using default instead...`
-                  );
-                }
+                customPolicy = JSON.parse(fs.readFileSync(bucketPolicyFile));
               }
               this.serverless.cli.log(`Configuring policy for bucket...`);
-              return configure.configurePolicyForBucket(this.aws, bucketName, policy);
+              return configure.configurePolicyForBucket(this.aws, bucketName, customPolicy);
             })
             .then(() => {
               if (this.cliOptions['cors-change'] === false) {
