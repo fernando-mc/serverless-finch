@@ -151,6 +151,10 @@ custom:
         - name: [header-name]
           value: [header-value]
         ...
+      'someGlobPattern/*.html':
+        - name: [header-name]
+          value: [header-value]
+        ...
       specific-directory/:
         - name: [header-name]
           value: [header-value]
