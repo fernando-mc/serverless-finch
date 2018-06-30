@@ -1,6 +1,7 @@
 'use strict';
 
 const path = require('path');
+const fs = require('fs');
 
 const _ = require('lodash');
 const BbPromise = require('bluebird');
@@ -65,7 +66,9 @@ class Client {
     return this._validateConfig()
       .then(() => {
         bucketName = this.options.bucketName;
-        return this.cliOptions.confirm === false ? true : new Confirm(`Are you sure you want to delete bucket '${bucketName}'?`).run();
+        return this.cliOptions.confirm === false
+          ? true
+          : new Confirm(`Are you sure you want to delete bucket '${bucketName}'?`).run();
       })
       .then(goOn => {
         if (goOn) {
@@ -124,8 +127,8 @@ class Client {
         clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
         bucketName = this.options.bucketName;
         headerSpec = this.options.objectHeaders;
-        indexDoc = this.options.indexDocument || "index.html";
-        errorDoc = this.options.errorDocument || "error.html";
+        indexDoc = this.options.indexDocument || 'index.html';
+        errorDoc = this.options.errorDocument || 'error.html';
         redirectAllRequestsTo = this.options.redirectAllRequestsTo || null;
         routingRules = this.options.routingRules || null;
 
@@ -148,7 +151,9 @@ class Client {
         }
 
         deployDescribe.forEach(m => this.serverless.cli.log(m));
-        return this.cliOptions.confirm === false ? true : new Confirm(`Do you want to proceed?`).run();
+        return this.cliOptions.confirm === false
+          ? true
+          : new Confirm(`Do you want to proceed?`).run();
       })
       .then(goOn => {
         if (goOn) {
@@ -191,7 +196,9 @@ class Client {
                 return BbPromise.resolve();
               }
               this.serverless.cli.log(`Configuring policy for bucket...`);
-              return configure.configurePolicyForBucket(this.aws, bucketName);
+              const bucketPolicyFile = this.serverless.service.custom.client.bucketPolicyFile;
+              const customPolicy = bucketPolicyFile && JSON.parse(fs.readFileSync(bucketPolicyFile));
+              return configure.configurePolicyForBucket(this.aws, bucketName, customPolicy);
             })
             .then(() => {
               if (this.cliOptions['cors-change'] === false) {

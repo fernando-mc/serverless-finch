@@ -124,6 +124,20 @@ The name of your error document inside your `distributionFolder`. This is the fi
 
 ---
 
+**bucketPolicyFile**
+
+```yaml
+custom:
+  client:
+    ...
+    bucketPolicyFile: [path/to/policy.json]
+    ...
+```
+
+Use this parameter to specify the path to a custom policy file. If not set, it defaults to a config for a basic static website. Currently, only JSON is supported. In your policy, make sure that your resource has the correct bucket name specified above: `"Resource": "arn:aws:s3:::BUCKET_NAME/*",`
+
+---
+
 **objectHeaders** 
 
 _optional_, no default
