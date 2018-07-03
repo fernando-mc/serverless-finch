@@ -354,6 +354,9 @@ For guidelines on contributing to the project, please refer to our [Contributing
 - Linus Marco - [linusmarco](https://github.com/linusmarco)
 
 ## Contributors
+- [WarWithinMe](https://github.com/WarWithinMe)
+- [tahir-mm](https://github.com/tahir-mm)
+- [jsphweid](https://github.com/jsphweid)
 - [redroot](https://github.com/redroot)
 - [amsross](https://github.com/amsross)
 - [pradel](https://github.com/pradel)
