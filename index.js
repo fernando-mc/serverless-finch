@@ -106,6 +106,7 @@ class Client {
       clientPath,
       bucketName,
       headerSpec,
+      orderSpec,
       indexDoc,
       errorDoc,
       redirectAllRequestsTo,
@@ -127,6 +128,7 @@ class Client {
         clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
         bucketName = this.options.bucketName;
         headerSpec = this.options.objectHeaders;
+        orderSpec = this.options.uploadOrder;
         indexDoc = this.options.indexDocument || 'index.html';
         errorDoc = this.options.errorDocument || 'error.html';
         redirectAllRequestsTo = this.options.redirectAllRequestsTo || null;
@@ -210,7 +212,7 @@ class Client {
             })
             .then(() => {
               this.serverless.cli.log(`Uploading client files to bucket...`);
-              return uploadDirectory(this.aws, bucketName, clientPath, headerSpec);
+              return uploadDirectory(this.aws, bucketName, clientPath, headerSpec, orderSpec);
             })
             .then(() => {
               this.serverless.cli.log(

@@ -238,6 +238,24 @@ _If `condition` is not specified, then all requests will be redirected in accord
 
 ---
 
+**uploadOrder**
+
+_optional_, no default
+
+```yaml
+custom:
+  client:
+    ...
+    uploadOrder:
+      - .*
+      - .*/assets/.*
+      - service-worker\.js
+      - index\.html
+    ...
+```
+
+The `uploadOrder` option can be used for ordering the files uploaded to the bucket.  When combined with `--no-delete-contents` this helps with 0 downtime, as we can make sure we upload any assets before serving the html files which need them.
+
 ### Command-line Parameters
 
 **--region**
