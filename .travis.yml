@@ -1,9 +1,13 @@
+sudo: required
+dist: trusty
 language: node_js
 node_js: lts/*
+python:
+  - "3.5"
 before_install:
 - sudo apt-get update
-- sudo apt-get install python3
-- sudo pip install -r ./test/requirements.txt
+- sudo apt-get -y install python3-pip python-dev
+- sudo pip3 install -r ./test/requirements.txt
 deploy:
   provider: npm
   email: fernandomc.sea@gmail.com
