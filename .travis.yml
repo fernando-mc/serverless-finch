@@ -3,7 +3,7 @@ node_js: lts/*
 before_install:
 - sudo apt-get update
 - sudo apt-get install python3
-- pip install -r ./tests/requirements.txt
+- pip install -r ./test/requirements.txt
 deploy:
   provider: npm
   email: fernandomc.sea@gmail.com
