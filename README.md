@@ -342,6 +342,8 @@ For guidelines on contributing to the project, please refer to our [Contributing
 ## Release Notes
 
 ### v2.0.\* 
+- Added ability to deploy files in a specific order to maximize uptime - [Issue 63](https://github.com/fernando-mc/serverless-finch/issues/63) - [stefan-lz](https://github.com/stefan-lz)
+- Added Python tests of functionality to speed up development - [fernando-mc](https://github.com/fernando-mc)
 - Major refactor of entire codebase to move towards modularity and testability
 - Added the ability to set HTTP headers for objects in bucket ([Issue 24](https://github.com/fernando-mc/serverless-finch/issues/24))
 - Added the ability to set redirect and routing options for the website (Initially implemented in [Pull 23](https://github.com/fernando-mc/serverless-finch/pull/23))
@@ -372,6 +374,7 @@ For guidelines on contributing to the project, please refer to our [Contributing
 - Linus Marco - [linusmarco](https://github.com/linusmarco)
 
 ## Contributors
+- [stefan-lz](https://github.com/stefan-lz)
 - [WarWithinMe](https://github.com/WarWithinMe)
 - [tahir-mm](https://github.com/tahir-mm)
 - [jsphweid](https://github.com/jsphweid)
