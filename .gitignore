@@ -2,3 +2,4 @@
 *.swp
 *.iml
 node_modules
+venv

@@ -1,0 +1,19 @@
+service: serverless-finch-test
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+
+plugins:
+  - serverless-finch
+
+custom:
+  client:
+    bucketName: sls-finch-test-objhdrs-custom-one
+    distributionFolder: website
+    indexDocument: home.html
+    errorDocument: 404.html
+    objectHeaders: 
+      home.html:
+        - name: Cache-Control
+          value: max-age=5

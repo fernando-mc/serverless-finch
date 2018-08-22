@@ -1,0 +1,14 @@
+service: serverless-finch-test
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+
+plugins:
+  - serverless-finch
+
+custom:
+  client:
+    bucketName: sls-finch-test-stndrd-usw2-fer
+    indexDocument: index.html
+    errorDocument: error.html
