@@ -3,6 +3,7 @@ node_js: lts/*
 before_install:
 - sudo apt-get update
 - sudo apt-get install python3
+- sudo apt-get install python3-venv
 - python3 -m venv venv
 - source venv/bin/activate
 - pip install -r ./test/requirements.txt
