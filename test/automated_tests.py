@@ -8,10 +8,12 @@ s3 = boto3.client('s3')
 def remove():
     os.system("sls client remove --no-confirm")
 
-# os.system("npm install")
 containing_dir = os.path.split(os.getcwd())[0]
 test_dir = os.path.join(os.getcwd(), 'test')
+os.system("npm pack")
 os.chdir(test_dir)
+
+os.system("npm install ../serverless-finch-?*.?*.?*.tgz")
 os.system("pwd")
 os.system("echo Serverless Finch Tests Running")
 
@@ -54,3 +56,7 @@ if res['CacheControl'] != 'max-age=5':
 else:
     print("################## TEST4 PASSES########################")
 remove()
+
+# Clean up node modules after all tests pass
+os.system("rm -r node_modules")
+os.system("rm ../serverless-finch-?*.?*.?*.tgz")

@@ -15,8 +15,6 @@ After you install python3 you can run the following commands within the `test` d
 ## Running tests
 
 1. You will need to clone the repository and then switch to the branch for the PR in question
-2. When on the PR branch (with all the new goodies that might break something) you can pack up the PR with `npm pack` this should output a file like `serverless-finch-2.2.0.tgz` or something similar.
-3. Then you will need to switch into the test directory and install the plugin with `npm install serverless-finch-x.x.x.tgz` (where the name of the thing to be installed is the version you're actually testing).
-4. Finally, you can either directly run the `test/automated_tests.py` file or just run `npm test`
+2. When on the PR branch (with all the new goodies that might break something) you can run the `test/automated_tests.py` file with python3 or just run `npm test`
 
 If the tests run at all without seeing Serverless Framework errors than you should have feedback as to if the tests pass from the results of `npm test`.

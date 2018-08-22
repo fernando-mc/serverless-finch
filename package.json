@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "precommit": "lint-staged",
-    "test": "python ./test/automated_tests.py"
+    "test": "python3 ./test/automated_tests.py"
   },
   "lint-staged": {
     "**/*.{js,json}": [
