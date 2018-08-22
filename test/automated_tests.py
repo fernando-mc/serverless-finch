@@ -13,7 +13,7 @@ containing_dir = os.path.split(os.getcwd())[0]
 test_dir = os.path.join(os.getcwd(), 'test')
 os.chdir(test_dir)
 os.system("pwd")
-os.system("echo WASSSSSUpppp")
+os.system("echo Serverless Finch Tests Running")
 
 # us-west-1
 os.system("cp ./config_files/standard-deploy-use1.yml ./serverless.yml")
