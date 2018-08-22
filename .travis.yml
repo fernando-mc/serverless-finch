@@ -3,7 +3,7 @@ dist: trusty
 language: node_js
 node_js: lts/*
 python:
-  - "3.5"
+- '3.5'
 before_install:
 - sudo apt-get update
 - sudo apt-get -y install python3-pip python-dev
@@ -13,6 +13,6 @@ deploy:
   provider: npm
   email: fernandomc.sea@gmail.com
   api_key:
-    secure: eqpq8f3aUYFH1VSO4u94kds/IEkPEvn8MHDuWD33k2iOGbfu2lv011nx67T57ZCwJqKGWmHE1pGFUcOCNr2KWC2Q1fjvChpzCl662ASyFIkXaX0O2DAwJc2/Wmr+ODA55lYcZQltCdl5bY8U2h6dcXe78Ry4gb6DHWcVR9HBHmY36Vs6nQC6TI3WmBh+h6/czlbrNoLLKFGoOFeDnkOxD67STjNl1LWPVtq9w5FiXz4hxVU2Y14NP02uRCIcOKl2d5X/3XENn6kq+YtZ3kdC9wNzVyf8lPkKiiJNBZxKkAxQ+/gk7wEmvHnBb5R2dBPtkxqRDKYuthV13sVHfVZcgfOWMuHMU1dklFGfZShFrHGpOR9d9aqMLob5rIkuFzb/YUFyrlDBQsJy5nmv0BdyjwAvqwWWM79daeGL/uupuxN+7RXcBQHGLBMuFHzjzRKbqMGho6YFBKko+0Og3PwWFqkuLAzKQHelZCgAWBRTqWO3fy6sUtr88wmWaTztmEwKMGeQ8vdL/BP0BLUQs8aEd3glAD8yufVtP3JpUyQsngMpDhtuOjE/oO6b0L32ZcmuQ5Hfy3lYFE9RYNiPvPXwRz6WB7afX2PCHycimVrmTH8wQkTST4TvGJvyLKffSsPUYY/W/OigR83eYtge0I3LwaOHtmNABWjokkNsCdUuBN8=
+    secure: NK9Fowv1akF9OwE72crP/FWQaK8FFa5T+/KiOD6hkiPVzRwwMeRbAV8BuNTo74PSJ9+jlBFaebCld/NMZd1D1Hzw/kGuNZCcQjr3kF8aH4TmlLTBQvzqu0Uz/R8trW+wfOGF61cGE/uBN32MRCyn/cAvlrFx6kLvrkfSo9ANj2gcu0TRh4L2jejEVgE2SxpuYry6FknW+jVtTVadWvNz/VX3ZOW5PyHu1Zdl1aJ0fz8sxG+2qNtP2w9cYLUWLCGfgJJyWN2xiS/6q9zDWYBZVr6jlzzXaenM4e/066Q1XzQWX1o+XnRvpAa9nRHcF450btmlrdyyzrAjhVeRlmXcb8It6X6cV+pVz9dx+ra8ScucVDG5uxb/Kr5nTHQTUxbeu9h8CktVoFVKa8XESFSpwZ/nSKh4DPnA6ppA1A47S56VNCIp6J9Hdh/wNtmTo0dU0PTmTdOkDvCoE5OMG9A1+u5gAEab2BnrBq7LCjZYpAC9pK4T8Rg/CSE/DEhrm9j/1NqaaBi1xqkVOSMFH3dQYNxtzatoz/0QIohKogfQ4EdmlJ99V4ZP8EN2BJ8Btl9mTWBTr3AoIvUHo74SeddaNOejZ5aLR2uMXYz8X/BeAc5UQzchuC7RpDPALBWxRpCW2zC06ynLk3X7+/YiwCJbphd5smNgUO8XWQDab0nTbGo=
   on:
     tags: true
