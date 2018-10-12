@@ -3,7 +3,6 @@
 const path = require('path');
 const fs = require('fs');
 
-const _ = require('lodash');
 const BbPromise = require('bluebird');
 const Confirm = require('prompt-confirm');
 
@@ -122,7 +121,11 @@ class Client {
         region =
           this.cliOptions.region ||
           this.options.region ||
-          _.get(this.serverless, 'service.provider.region');
+          (this.serverless.service &&
+          this.serverless.service.provider &&
+          this.serverless.service.provider.region
+            ? this.serverless.service.provider.region
+            : undefined);
 
         distributionFolder = this.options.distributionFolder || path.join('client/dist');
         clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
