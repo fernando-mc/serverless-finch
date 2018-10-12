@@ -40,7 +40,6 @@
   },
   "homepage": "https://github.com/fernando-mc/serverless-finch#readme",
   "dependencies": {
-    "async": "^1.5.2",
     "bluebird": "^3.0.6",
     "is_js": "^0.9.0",
     "lodash": "^4.2.1",
