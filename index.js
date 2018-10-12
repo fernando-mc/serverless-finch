@@ -3,7 +3,6 @@
 const path = require('path');
 const fs = require('fs');
 
-const BbPromise = require('bluebird');
 const Confirm = require('prompt-confirm');
 
 const bucketUtils = require('./lib/bucketUtils');
@@ -54,9 +53,9 @@ class Client {
     try {
       validateClient(this.serverless, this.options);
     } catch (e) {
-      return BbPromise.reject(`Serverless Finch configuration errors:\n- ${e.join('\n- ')}`);
+      return Promise.reject(`Serverless Finch configuration errors:\n- ${e.join('\n- ')}`);
     }
-    return BbPromise.resolve();
+    return Promise.resolve();
   }
 
   _removeDeployedResources() {
@@ -92,10 +91,10 @@ class Client {
           });
         }
         this.serverless.cli.log('Bucket not removed');
-        return BbPromise.resolve();
+        return Promise.resolve();
       })
       .catch(error => {
-        return BbPromise.reject(new this.error(error));
+        return Promise.reject(new this.error(error));
       });
   }
 
@@ -170,7 +169,7 @@ class Client {
                 this.serverless.cli.log(`Bucket found...`);
                 if (this.cliOptions['delete-contents'] === false) {
                   this.serverless.cli.log(`Keeping current bucket contents...`);
-                  return BbPromise.resolve();
+                  return Promise.resolve();
                 }
 
                 this.serverless.cli.log(`Deleting all objects from bucket...`);
@@ -183,7 +182,7 @@ class Client {
             .then(() => {
               if (this.cliOptions['config-change'] === false) {
                 this.serverless.cli.log(`Retaining existing bucket configuration...`);
-                return BbPromise.resolve();
+                return Promise.resolve();
               }
               this.serverless.cli.log(`Configuring bucket...`);
               return configure.configureBucket(
@@ -198,7 +197,7 @@ class Client {
             .then(() => {
               if (this.cliOptions['policy-change'] === false) {
                 this.serverless.cli.log(`Retaining existing bucket policy...`);
-                return BbPromise.resolve();
+                return Promise.resolve();
               }
               this.serverless.cli.log(`Configuring policy for bucket...`);
               const bucketPolicyFile = this.serverless.service.custom.client.bucketPolicyFile;
@@ -209,7 +208,7 @@ class Client {
             .then(() => {
               if (this.cliOptions['cors-change'] === false) {
                 this.serverless.cli.log(`Retaining existing bucket CORS configuration...`);
-                return BbPromise.resolve();
+                return Promise.resolve();
               }
               this.serverless.cli.log(`Configuring CORS for bucket...`);
               return configure.configureCorsForBucket(this.aws, bucketName);
@@ -227,10 +226,10 @@ class Client {
             });
         }
         this.serverless.cli.log('Deployment cancelled');
-        return BbPromise.resolve();
+        return Promise.resolve();
       })
       .catch(error => {
-        return BbPromise.reject(new this.error(error));
+        return Promise.reject(new this.error(error));
       });
   }
 }
