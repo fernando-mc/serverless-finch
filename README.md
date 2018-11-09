@@ -130,11 +130,13 @@ The name of your error document inside your `distributionFolder`. This is the fi
 custom:
   client:
     ...
-    bucketPolicyFile: [path/to/policy.json]
+    bucketPolicyFile: "${env:PWD}/path/to/policy.json"
     ...
 ```
 
-Use this parameter to specify the path to a custom policy file. If not set, it defaults to a config for a basic static website. Currently, only JSON is supported. In your policy, make sure that your resource has the correct bucket name specified above: `"Resource": "arn:aws:s3:::BUCKET_NAME/*",`
+Use this parameter to specify the path to a _single_ custom policy file. If not set, it defaults to a config for a basic static website. Currently, only JSON is supported. In your policy, make sure that your resource has the correct bucket name specified above: `"Resource": "arn:aws:s3:::BUCKET_NAME/*",`
+
+_Note: As in the example you will want to use `${env:PWD}` if you want to dynamically specify the policy within your repo. Additionally, you will want to specify different policies depending on your stage using `${self:provider.stage}` to ensure your `BUCKET_NAME` corosponds to the stage._
 
 ---
 
