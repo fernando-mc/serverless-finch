@@ -22,7 +22,7 @@ plugins:
 
 custom:
   client:
-    bucketName: [unique-s3-bucketname] # (see Configuration Parameters below)
+    bucketName: "unique-s3-bucketname" # (see Configuration Parameters below)
     # [other configuration parameters] (see Configuration Parameters below)
 ```
 
@@ -69,7 +69,7 @@ _required_
 ```yaml
 custom:
   client:
-    bucketName: [unique-s3-bucketname]
+    bucketName: unique-s3-bucketname
 ```
 
 Use this parameter to specify a unique name for the S3 bucket that your files will be uploaded to.
@@ -84,7 +84,7 @@ _optional_, default: `client/dist`
 custom:
   client:
     ...
-    distributionFolder: [path/to/files]
+    distributionFolder: path/to/files
     ...
 ```
 
@@ -100,7 +100,7 @@ _optional_, default: `index.html`
 custom:
   client:
     ...
-    indexDocument: [file-name.ext]
+    indexDocument: file-name.ext
     ...
 ```
 
@@ -116,7 +116,7 @@ _optional_, default: `error.html`
 custom:
   client:
     ...
-    errorDocument: [file-name.ext]
+    errorDocument: file-name.ext
     ...
 ```
 
@@ -130,7 +130,7 @@ The name of your error document inside your `distributionFolder`. This is the fi
 custom:
   client:
     ...
-    bucketPolicyFile: "${env:PWD}/path/to/policy.json"
+    bucketPolicyFile: path/to/policy.json
     ...
 ```
 
@@ -150,20 +150,20 @@ custom:
     ...
     objectHeaders:
       ALL_OBJECTS:
-        - name: [header-name]
-          value: [header-value]
+        - name: header-name
+          value: header-value
         ...
       'someGlobPattern/*.html':
-        - name: [header-name]
-          value: [header-value]
+        - name: header-name
+          value: header-value
         ...
       specific-directory/:
-        - name: [header-name]
-          value: [header-value]
+        - name: header-name
+          value: header-value
         ...
       specific-file.ext:
-        - name: [header-name]
-          value: [header-value]
+        - name: header-name
+          value: header-value
         ...
       ... [more file- or folder-specific rules]
     ...
@@ -186,8 +186,8 @@ custom:
   client:
     ...
     redirectAllRequestsTo:
-      hostName: [hostName]
-      protocol: [http|https]
+      hostName: hostName
+      protocol: "[http|https]"
     ...
 ```
 
@@ -207,15 +207,15 @@ custom:
     ...
     routingRules:
       - redirect:
-          hostName: [hostName]
-          httpRedirectCode: [CODE]
-          protocol: [http|https]
-          replaceKeyPrefixWith: [prefix]
+          hostName: hostName
+          httpRedirectCode: httpCode
+          protocol: "[http|https]"
+          replaceKeyPrefixWith: prefix
           replaceKeyWith: [object]
         condition:
           keyPrefixEquals: [prefix]
-          httpErrorCodeReturnedEquals: [CODE]
-      - [more-rules...]
+          httpErrorCodeReturnedEquals: httpCOde
+      - ...
     ...
 ```
 
