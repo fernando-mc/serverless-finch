@@ -22,7 +22,7 @@ plugins:
 
 custom:
   client:
-    bucketName: "unique-s3-bucketname" # (see Configuration Parameters below)
+    bucketName: unique-s3-bucketname # (see Configuration Parameters below)
     # [other configuration parameters] (see Configuration Parameters below)
 ```
 
@@ -136,7 +136,25 @@ custom:
 
 Use this parameter to specify the path to a _single_ custom policy file. If not set, it defaults to a config for a basic static website. Currently, only JSON is supported. In your policy, make sure that your resource has the correct bucket name specified above: `"Resource": "arn:aws:s3:::BUCKET_NAME/*",`
 
-_Note: As in the example you will want to use `${env:PWD}` if you want to dynamically specify the policy within your repo. Additionally, you will want to specify different policies depending on your stage using `${self:provider.stage}` to ensure your `BUCKET_NAME` corosponds to the stage._
+_Note: You can also use `${env:PWD}` if you want to dynamically specify the policy within your repo. for example:_ 
+
+```yaml
+custom:
+  client:
+    ...
+    bucketPolicyFile: "${env:PWD}/path/to/policy.json"
+    ...
+```
+
+_Additionally, you will want to specify different policies depending on your stage using `${self:provider.stage}` to ensure your `BUCKET_NAME` corosponds to the stage._
+
+```yaml
+custom:
+  client:
+    ...
+    bucketPolicyFile: "/path/to/policy-${self:provider.stage}.json"
+    ...
+```
 
 ---
 
@@ -165,7 +183,7 @@ custom:
         - name: header-name
           value: header-value
         ...
-      ... [more file- or folder-specific rules]
+      ... # more file- or folder-specific rules
     ...
 ```
 
@@ -187,7 +205,7 @@ custom:
     ...
     redirectAllRequestsTo:
       hostName: hostName
-      protocol: "[http|https]"
+      protocol: protocol # "http" or "https"
     ...
 ```
 
@@ -209,11 +227,11 @@ custom:
       - redirect:
           hostName: hostName
           httpRedirectCode: httpCode
-          protocol: "[http|https]"
+          protocol: protocol # "http" or "https"
           replaceKeyPrefixWith: prefix
           replaceKeyWith: [object]
         condition:
-          keyPrefixEquals: [prefix]
+          keyPrefixEquals: prefix
           httpErrorCodeReturnedEquals: httpCOde
       - ...
     ...
