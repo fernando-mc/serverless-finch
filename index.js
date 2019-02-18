@@ -61,11 +61,12 @@ class Client {
   }
 
   _removeDeployedResources() {
-    let bucketName;
+    let bucketName, keyPrefix;
 
     return this._validateConfig()
       .then(() => {
         bucketName = this.options.bucketName;
+        keyPrefix = this.options.keyPrefix;
         return this.cliOptions.confirm === false
           ? true
           : new Confirm(`Are you sure you want to delete bucket '${bucketName}'?`).run();
@@ -77,15 +78,22 @@ class Client {
             if (exists) {
               this.serverless.cli.log(`Deleting all objects from bucket...`);
               return bucketUtils
-                .emptyBucket(this.aws, bucketName)
+                .emptyBucket(this.aws, bucketName, keyPrefix)
                 .then(() => {
-                  this.serverless.cli.log(`Removing bucket...`);
-                  return bucketUtils.deleteBucket(this.aws, bucketName);
+                  if (keyPrefix) {
+                    this.serverless.cli.log(`Removed only the files under the prefix ${keyPrefix}`);
+                    return true;
+                  } else {
+                    this.serverless.cli.log(`Removing bucket...`);
+                    return bucketUtils.deleteBucket(this.aws, bucketName);
+                  }
                 })
                 .then(() => {
-                  this.serverless.cli.log(
-                    `Success! Your files have been removed and your bucket has been deleted`
-                  );
+                  if (!keyPrefix) {
+                    this.serverless.cli.log(
+                      `Success! Your files have been removed and your bucket has been deleted`
+                    );
+                  }
                 });
             } else {
               this.serverless.cli.log(`Bucket does not exist`);
