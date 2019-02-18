@@ -110,6 +110,7 @@ class Client {
       indexDoc,
       errorDoc,
       redirectAllRequestsTo,
+      keyPrefix,
       routingRules;
 
     return this._validateConfig()
@@ -127,6 +128,7 @@ class Client {
         distributionFolder = this.options.distributionFolder || path.join('client/dist');
         clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
         bucketName = this.options.bucketName;
+        keyPrefix = this.options.keyPrefix;
         headerSpec = this.options.objectHeaders;
         orderSpec = this.options.uploadOrder;
         indexDoc = this.options.indexDocument || 'index.html';
@@ -171,7 +173,7 @@ class Client {
                 }
 
                 this.serverless.cli.log(`Deleting all objects from bucket...`);
-                return bucketUtils.emptyBucket(this.aws, bucketName);
+                return bucketUtils.emptyBucket(this.aws, bucketName, keyPrefix);
               } else {
                 this.serverless.cli.log(`Bucket does not exist. Creating bucket...`);
                 return bucketUtils.createBucket(this.aws, bucketName);
@@ -199,7 +201,8 @@ class Client {
               }
               this.serverless.cli.log(`Configuring policy for bucket...`);
               const bucketPolicyFile = this.serverless.service.custom.client.bucketPolicyFile;
-              const customPolicy = bucketPolicyFile && JSON.parse(fs.readFileSync(bucketPolicyFile));
+              const customPolicy =
+                bucketPolicyFile && JSON.parse(fs.readFileSync(bucketPolicyFile));
               return configure.configurePolicyForBucket(this.aws, bucketName, customPolicy);
             })
             .then(() => {
@@ -212,7 +215,14 @@ class Client {
             })
             .then(() => {
               this.serverless.cli.log(`Uploading client files to bucket...`);
-              return uploadDirectory(this.aws, bucketName, clientPath, headerSpec, orderSpec);
+              return uploadDirectory(
+                this.aws,
+                bucketName,
+                clientPath,
+                headerSpec,
+                orderSpec,
+                keyPrefix
+              );
             })
             .then(() => {
               this.serverless.cli.log(
