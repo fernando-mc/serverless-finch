@@ -3,8 +3,6 @@
 const path = require('path');
 const fs = require('fs');
 
-const Confirm = require('prompt-confirm');
-
 const bucketUtils = require('./lib/bucketUtils');
 const configure = require('./lib/configure');
 const regionUrls = require('./lib/resources/awsRegionUrls');
