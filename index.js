@@ -59,11 +59,12 @@ class Client {
   }
 
   _removeDeployedResources() {
-    let bucketName;
+    let bucketName, manageResources;
 
     return this._validateConfig()
       .then(() => {
         bucketName = this.options.bucketName;
+        manageResources = this.options.manageResources;
         return this.cliOptions.confirm === false
           ? true
           : new Confirm(`Are you sure you want to delete bucket '${bucketName}'?`).run();
@@ -77,13 +78,23 @@ class Client {
               return bucketUtils
                 .emptyBucket(this.aws, bucketName)
                 .then(() => {
-                  this.serverless.cli.log(`Removing bucket...`);
-                  return bucketUtils.deleteBucket(this.aws, bucketName);
+                  if (manageResources === false) {
+                    this.serverless.cli.log(
+                      'manageResources has been set to "false". Bucket will not be deleted'
+                    );
+                  } else {
+                    this.serverless.cli.log(`Removing bucket...`);
+                    return bucketUtils.deleteBucket(this.aws, bucketName);
+                  }
                 })
                 .then(() => {
-                  this.serverless.cli.log(
-                    `Success! Your files have been removed and your bucket has been deleted`
-                  );
+                  if (manageResources === false) {
+                    this.serverless.cli.log(`Success! Your files have been removed`);
+                  } else {
+                    this.serverless.cli.log(
+                      `Success! Your files have been removed and your bucket has been deleted`
+                    );
+                  }
                 });
             } else {
               this.serverless.cli.log(`Bucket does not exist`);
@@ -108,7 +119,8 @@ class Client {
       indexDoc,
       errorDoc,
       redirectAllRequestsTo,
-      routingRules;
+      routingRules,
+      manageResources;
 
     return this._validateConfig()
       .then(() => {
@@ -129,6 +141,7 @@ class Client {
         distributionFolder = this.options.distributionFolder || path.join('client/dist');
         clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
         bucketName = this.options.bucketName;
+        manageResources = this.options.manageResources;
         headerSpec = this.options.objectHeaders;
         orderSpec = this.options.uploadOrder;
         indexDoc = this.options.indexDocument || 'index.html';
@@ -144,13 +157,14 @@ class Client {
         deployDescribe.push(
           `- Upload all files from '${distributionFolder}' to bucket '${bucketName}'`
         );
-        if (this.cliOptions['config-change'] !== false) {
+
+        if (this.cliOptions['config-change'] !== false && manageResources !== false) {
           deployDescribe.push(`- Set (and overwrite) bucket '${bucketName}' configuration`);
         }
-        if (this.cliOptions['policy-change'] !== false) {
+        if (this.cliOptions['policy-change'] !== false && manageResources !== false) {
           deployDescribe.push(`- Set (and overwrite) bucket '${bucketName}' bucket policy`);
         }
-        if (this.cliOptions['cors-change'] !== false) {
+        if (this.cliOptions['cors-change'] !== false && manageResources !== false) {
           deployDescribe.push(`- Set (and overwrite) bucket '${bucketName}' CORS policy`);
         }
 
@@ -175,12 +189,17 @@ class Client {
                 this.serverless.cli.log(`Deleting all objects from bucket...`);
                 return bucketUtils.emptyBucket(this.aws, bucketName);
               } else {
+                if (manageResources === false) {
+                  return BbPromise.reject(
+                    `Bucket does not exist, and manageResources has been set to "false". Ensure that bucket exists or that all resources are deployed first`
+                  );
+                }
                 this.serverless.cli.log(`Bucket does not exist. Creating bucket...`);
                 return bucketUtils.createBucket(this.aws, bucketName);
               }
             })
             .then(() => {
-              if (this.cliOptions['config-change'] === false) {
+              if (this.cliOptions['config-change'] === false || manageResources === false) {
                 this.serverless.cli.log(`Retaining existing bucket configuration...`);
                 return Promise.resolve();
               }
@@ -195,7 +214,7 @@ class Client {
               );
             })
             .then(() => {
-              if (this.cliOptions['policy-change'] === false) {
+              if (this.cliOptions['policy-change'] === false || manageResources === false) {
                 this.serverless.cli.log(`Retaining existing bucket policy...`);
                 return Promise.resolve();
               }
@@ -206,7 +225,7 @@ class Client {
               return configure.configurePolicyForBucket(this.aws, bucketName, customPolicy);
             })
             .then(() => {
-              if (this.cliOptions['cors-change'] === false) {
+              if (this.cliOptions['cors-change'] === false || manageResources === false) {
                 this.serverless.cli.log(`Retaining existing bucket CORS configuration...`);
                 return Promise.resolve();
               }
