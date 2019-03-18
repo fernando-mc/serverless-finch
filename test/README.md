@@ -9,7 +9,7 @@ Tests are currently just a Python script that runs a few common use cases and ch
 
 After you install python3 you can run the following commands within the `test` directory:
 1. python3 -m venv venv
-2. source venv/bin/activiate
+2. source venv/bin/activate
 3. pip install -r requirements.txt
 
 ## Running tests

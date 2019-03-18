@@ -40,10 +40,7 @@
   },
   "homepage": "https://github.com/fernando-mc/serverless-finch#readme",
   "dependencies": {
-    "async": "^1.5.2",
-    "bluebird": "^3.0.6",
     "is_js": "^0.9.0",
-    "lodash": "^4.2.1",
     "mime": "^1.2.11",
     "minimatch": "^3.0.4",
     "prompt-confirm": "^1.2.0"
@@ -52,8 +49,7 @@
     "husky": "^0.14.3",
     "lint-staged": "^7.0.0",
     "mocha": "^5.0.0",
-    "prettier": "^1.11.1",
-    "request": "^2.83.0",
+    "prettier": "^1.14.3",
     "serverless": "^1.26.0"
   }
 }
