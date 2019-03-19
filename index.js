@@ -59,11 +59,13 @@ class Client {
   }
 
   _removeDeployedResources() {
-    let bucketName, manageResources;
+
+    let bucketName, manageResources, keyPrefix;
 
     return this._validateConfig()
       .then(() => {
         bucketName = this.options.bucketName;
+        keyPrefix = this.options.keyPrefix;
         manageResources = this.options.manageResources;
         return this.cliOptions.confirm === false
           ? true
@@ -76,24 +78,32 @@ class Client {
             if (exists) {
               this.serverless.cli.log(`Deleting all objects from bucket...`);
               return bucketUtils
-                .emptyBucket(this.aws, bucketName)
+                .emptyBucket(this.aws, bucketName, keyPrefix)
                 .then(() => {
-                  if (manageResources === false) {
-                    this.serverless.cli.log(
-                      'manageResources has been set to "false". Bucket will not be deleted'
-                    );
+                  if (keyPrefix) {
+                    this.serverless.cli.log(`Removed only the files under the prefix ${keyPrefix}`);
+                    return true;
                   } else {
-                    this.serverless.cli.log(`Removing bucket...`);
-                    return bucketUtils.deleteBucket(this.aws, bucketName);
+                    if (manageResources === false) {
+                      this.serverless.cli.log(
+                        'manageResources has been set to "false". Bucket will not be deleted'
+                      );
+                    } else {
+                      this.serverless.cli.log(`Removing bucket...`);
+                      return bucketUtils.deleteBucket(this.aws, bucketName);
+                    }
                   }
                 })
                 .then(() => {
+
                   if (manageResources === false) {
                     this.serverless.cli.log(`Success! Your files have been removed`);
                   } else {
-                    this.serverless.cli.log(
-                      `Success! Your files have been removed and your bucket has been deleted`
-                    );
+                    if (!keyPrefix) {
+                      this.serverless.cli.log(
+                        `Success! Your files have been removed and your bucket has been deleted`
+                      );
+                    }
                   }
                 });
             } else {
@@ -119,6 +129,7 @@ class Client {
       indexDoc,
       errorDoc,
       redirectAllRequestsTo,
+      keyPrefix,
       routingRules,
       manageResources;
 
@@ -141,6 +152,7 @@ class Client {
         distributionFolder = this.options.distributionFolder || path.join('client/dist');
         clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
         bucketName = this.options.bucketName;
+        keyPrefix = this.options.keyPrefix;
         manageResources = this.options.manageResources;
         headerSpec = this.options.objectHeaders;
         orderSpec = this.options.uploadOrder;
@@ -187,7 +199,7 @@ class Client {
                 }
 
                 this.serverless.cli.log(`Deleting all objects from bucket...`);
-                return bucketUtils.emptyBucket(this.aws, bucketName);
+                return bucketUtils.emptyBucket(this.aws, bucketName, keyPrefix);
               } else {
                 if (manageResources === false) {
                   return BbPromise.reject(
@@ -234,7 +246,14 @@ class Client {
             })
             .then(() => {
               this.serverless.cli.log(`Uploading client files to bucket...`);
-              return uploadDirectory(this.aws, bucketName, clientPath, headerSpec, orderSpec);
+              return uploadDirectory(
+                this.aws,
+                bucketName,
+                clientPath,
+                headerSpec,
+                orderSpec,
+                keyPrefix
+              );
             })
             .then(() => {
               this.serverless.cli.log(
