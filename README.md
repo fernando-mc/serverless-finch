@@ -276,6 +276,41 @@ custom:
 
 The `uploadOrder` option can be used for ordering the files uploaded to the bucket.  When combined with `--no-delete-contents` this helps with 0 downtime, as we can make sure we upload any assets before serving the html files which need them.
 
+---
+
+**keyPrefix**
+
+_optional_, no default
+
+```yaml
+custom:
+  client:
+    ...
+    keyPrefix: s3-folder/possible-sub-folder
+    ...
+```
+
+Adding a keyPrefix option, so that it's possibly to upload files to a prefixed s3 path. You can use this to specify a key prefix path such as `static` so the deployment matches the naming conventions of popular frontend frameworks and tools.
+
+---
+
+**manageResources**
+
+_optional_, default `true` (the plugin does manage your resources by default)
+
+```yaml
+custom:
+  client:
+    ...
+    manageResources: false
+    ...
+```
+
+This allows you to opt out of having serverless-finch create or configure the s3 bucket. Instead, you can rely on an existing bucket or a CloudFormation definition.
+
+
+
+
 ### Command-line Parameters
 
 **--region**
@@ -361,6 +396,11 @@ For guidelines on contributing to the project, please refer to our [Contributing
 
 ## Release Notes
 
+### v2.1.\*
+- Added the `manageResources` option to allow you to tell serverless-finch to not interact with your S3 bucket [Pull 75](https://github.com/fernando-mc/serverless-finch/pull/75) - [sprockow](https://github.com/sprockow)
+- Added the `keyPrefix` option to enable working with S3 folders - [Pull 76](https://github.com/fernando-mc/serverless-finch/pull/76) - [Archanium](https://github.com/Archanium)
+- Fixed some testing instructions
+
 ### v2.0.\* 
 - Added ability to deploy files in a specific order to maximize uptime - [Issue 63](https://github.com/fernando-mc/serverless-finch/issues/63) - [stefan-lz](https://github.com/stefan-lz)
 - Added Python tests of functionality to speed up development - [fernando-mc](https://github.com/fernando-mc)
@@ -405,5 +445,7 @@ For guidelines on contributing to the project, please refer to our [Contributing
 - [shentonfreude](https://github.com/shentonfreude)
 - [evanseeds](https://github.com/evanseeds)
 - [wzedi](https://github.com/wzedi)
+- [sprockow](https://github.com/sprockow)
+- [Archanium](https://github.com/Archanium)
 
 Forked from the [**serverless-client-s3**](https://github.com/serverless/serverless-client-s3/)
