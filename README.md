@@ -396,7 +396,7 @@ For guidelines on contributing to the project, please refer to our [Contributing
 
 ## Release Notes
 
-### v2.1.\*
+### v2.4.\*
 - Added the `manageResources` option to allow you to tell serverless-finch to not interact with your S3 bucket [Pull 75](https://github.com/fernando-mc/serverless-finch/pull/75) - [sprockow](https://github.com/sprockow)
 - Added the `keyPrefix` option to enable working with S3 folders - [Pull 76](https://github.com/fernando-mc/serverless-finch/pull/76) - [Archanium](https://github.com/Archanium)
 - Fixed some testing instructions
