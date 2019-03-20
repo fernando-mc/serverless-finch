@@ -20,7 +20,7 @@ os.system("echo Serverless Finch Tests Running")
 # us-west-1
 os.system("cp ./config_files/standard-deploy-use1.yml ./serverless.yml")
 os.system("sls client deploy --region us-east-1 --no-confirm")
-site_text = urlopen("http://sls-finch-test-stndrd-use1.s3-website-us-east-1.amazonaws.com/").read()
+site_text = urlopen("http://sls-finch-test-stndrd-use1-v2.s3-website-us-east-1.amazonaws.com/").read()
 if "Serverless Finch Test Page" not in str(site_text):
     raise Exception("us-west-1 test fails")
 else:

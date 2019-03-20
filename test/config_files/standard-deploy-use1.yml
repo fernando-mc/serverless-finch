@@ -9,6 +9,6 @@ plugins:
 
 custom:
   client:
-    bucketName: sls-finch-test-stndrd-use1
+    bucketName: sls-finch-test-stndrd-use1-v2
     indexDocument: index.html
     errorDocument: error.html
