@@ -234,7 +234,8 @@ class Client {
               const bucketPolicyFile = this.serverless.service.custom.client.bucketPolicyFile;
               const customPolicy =
                 bucketPolicyFile && JSON.parse(fs.readFileSync(bucketPolicyFile));
-              return configure.configurePolicyForBucket(this.aws, bucketName, customPolicy);
+              const httpsOnly = this.serverless.service.custom.client.httpsOnly || false;
+              return configure.configurePolicyForBucket(this.aws, bucketName, customPolicy, httpsOnly);
             })
             .then(() => {
               if (this.cliOptions['cors-change'] === false || manageResources === false) {
@@ -256,10 +257,14 @@ class Client {
               );
             })
             .then(() => {
+              // S3 HTTPS is terminated on a different URL
+              const httpsOnly = this.serverless.service.custom.client.httpsOnly || false;
+              const siteUrl = httpsOnly
+                  ? `https://s3.${region}.amazonaws.com/${bucketName}/`
+                  : `http://${bucketName}.${regionUrls[region]}/`;
+
               this.serverless.cli.log(
-                `Success! Your site should be available at http://${bucketName}.${
-                  regionUrls[region]
-                }/`
+                `Success! Your site should be available at ${siteUrl}`
               );
             });
         }
