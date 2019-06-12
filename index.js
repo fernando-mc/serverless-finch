@@ -59,7 +59,6 @@ class Client {
   }
 
   _removeDeployedResources() {
-
     let bucketName, manageResources, keyPrefix;
 
     return this._validateConfig()
@@ -95,7 +94,6 @@ class Client {
                   }
                 })
                 .then(() => {
-
                   if (manageResources === false) {
                     this.serverless.cli.log(`Success! Your files have been removed`);
                   } else {
@@ -202,8 +200,10 @@ class Client {
                 return bucketUtils.emptyBucket(this.aws, bucketName, keyPrefix);
               } else {
                 if (manageResources === false) {
-                  return BbPromise.reject(
-                    `Bucket does not exist, and manageResources has been set to "false". Ensure that bucket exists or that all resources are deployed first`
+                  return Promise.reject(
+                    new this.error(
+                      `Bucket does not exist, and manageResources has been set to "false". Ensure that bucket exists or that all resources are deployed first`
+                    )
                   );
                 }
                 this.serverless.cli.log(`Bucket does not exist. Creating bucket...`);
@@ -257,9 +257,7 @@ class Client {
             })
             .then(() => {
               this.serverless.cli.log(
-                `Success! Your site should be available at http://${bucketName}.${
-                  regionUrls[region]
-                }/`
+                `Success! Your site should be available at http://${bucketName}.${regionUrls[region]}/`
               );
             });
         }
