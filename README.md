@@ -232,7 +232,7 @@ custom:
           replaceKeyWith: [object]
         condition:
           keyPrefixEquals: prefix
-          httpErrorCodeReturnedEquals: httpCOde
+          httpErrorCodeReturnedEquals: httpCode
       - ...
     ...
 ```
