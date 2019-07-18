@@ -202,7 +202,7 @@ class Client {
                 return bucketUtils.emptyBucket(this.aws, bucketName, keyPrefix);
               } else {
                 if (manageResources === false) {
-                  return BbPromise.reject(
+                  return Promise.reject(
                     `Bucket does not exist, and manageResources has been set to "false". Ensure that bucket exists or that all resources are deployed first`
                   );
                 }
