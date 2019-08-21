@@ -400,6 +400,8 @@ For guidelines on contributing to the project, please refer to our [Contributing
 - Added the `manageResources` option to allow you to tell serverless-finch to not interact with your S3 bucket [Pull 75](https://github.com/fernando-mc/serverless-finch/pull/75) - [sprockow](https://github.com/sprockow)
 - Added the `keyPrefix` option to enable working with S3 folders - [Pull 76](https://github.com/fernando-mc/serverless-finch/pull/76) - [Archanium](https://github.com/Archanium)
 - Fixed some testing instructions
+- Path resolution bugfix - [Olga Skurativska](https://github.com/ol-ko) - [Pull 87](https://github.com/fernando-mc/serverless-finch/pull/87)
+- Typo and legacy promise bugfixes - [Joel Van Horn](https://github.com/joelvh), [Raptor](https://github.com/redhat-raptor), [Frederik Ring](https://github.com/m90)
 
 ### v2.0.\* 
 - Added ability to deploy files in a specific order to maximize uptime - [Issue 63](https://github.com/fernando-mc/serverless-finch/issues/63) - [stefan-lz](https://github.com/stefan-lz)
@@ -447,5 +449,8 @@ For guidelines on contributing to the project, please refer to our [Contributing
 - [wzedi](https://github.com/wzedi)
 - [sprockow](https://github.com/sprockow)
 - [Archanium](https://github.com/Archanium)
+- [m90](https://github.com/m90)
+- [redhat-raptor](https://github.com/redhat-raptor)
+- [ol-ko](https://github.com/ol-ko)
 
 Forked from the [**serverless-client-s3**](https://github.com/serverless/serverless-client-s3/)
