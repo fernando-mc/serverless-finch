@@ -9,4 +9,4 @@ python-dateutil==2.7.3
 requests==2.19.1
 s3transfer==0.1.13
 six==1.11.0
-urllib3==1.23
+urllib3==1.24.2
