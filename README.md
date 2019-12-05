@@ -294,6 +294,24 @@ Adding a keyPrefix option, so that it's possibly to upload files to a prefixed s
 
 ---
 
+**sse**
+
+_optional_, no default
+
+```yaml
+custom:
+  client:
+    ...
+    sse: AES256
+    ...
+```
+
+Enable server side encryption for the uploaded files.
+
+[AWS Documentation](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingServerSideEncryption.html)
+
+---
+
 **manageResources**
 
 _optional_, default `true` (the plugin does manage your resources by default)
