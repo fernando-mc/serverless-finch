@@ -59,7 +59,6 @@ class Client {
   }
 
   _removeDeployedResources() {
-
     let bucketName, manageResources, keyPrefix;
 
     return this._validateConfig()
@@ -95,7 +94,6 @@ class Client {
                   }
                 })
                 .then(() => {
-
                   if (manageResources === false) {
                     this.serverless.cli.log(`Success! Your files have been removed`);
                   } else {
@@ -130,6 +128,7 @@ class Client {
       errorDoc,
       redirectAllRequestsTo,
       keyPrefix,
+      sse,
       routingRules,
       manageResources;
 
@@ -153,6 +152,7 @@ class Client {
         clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
         bucketName = this.options.bucketName;
         keyPrefix = this.options.keyPrefix;
+        sse = this.options.sse || null;
         manageResources = this.options.manageResources;
         headerSpec = this.options.objectHeaders;
         orderSpec = this.options.uploadOrder;
@@ -252,14 +252,13 @@ class Client {
                 clientPath,
                 headerSpec,
                 orderSpec,
-                keyPrefix
+                keyPrefix,
+                sse
               );
             })
             .then(() => {
               this.serverless.cli.log(
-                `Success! Your site should be available at http://${bucketName}.${
-                  regionUrls[region]
-                }/`
+                `Success! Your site should be available at http://${bucketName}.${regionUrls[region]}/`
               );
             });
         }
