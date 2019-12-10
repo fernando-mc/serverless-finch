@@ -414,8 +414,12 @@ For guidelines on contributing to the project, please refer to our [Contributing
 
 ## Release Notes
 
+### v2.5.0
+
+- Added the `sse` option to allow you to encrypt files with Server Side Encryption using `AES256` or `aws:kms` - [Pull 91](https://github.com/fernando-mc/serverless-finch/pull/91) - [Severi Haverila](https://github.com/severi)
+
 ### v2.4.\*
-- Added the `manageResources` option to allow you to tell serverless-finch to not interact with your S3 bucket [Pull 75](https://github.com/fernando-mc/serverless-finch/pull/75) - [sprockow](https://github.com/sprockow)
+- Added the `manageResources` option to allow you to tell serverless-finch to not interact with your S3 bucket - [Pull 75](https://github.com/fernando-mc/serverless-finch/pull/75) - [sprockow](https://github.com/sprockow)
 - Added the `keyPrefix` option to enable working with S3 folders - [Pull 76](https://github.com/fernando-mc/serverless-finch/pull/76) - [Archanium](https://github.com/Archanium)
 - Fixed some testing instructions
 - Path resolution bugfix - [Olga Skurativska](https://github.com/ol-ko) - [Pull 87](https://github.com/fernando-mc/serverless-finch/pull/87)
@@ -470,5 +474,6 @@ For guidelines on contributing to the project, please refer to our [Contributing
 - [m90](https://github.com/m90)
 - [redhat-raptor](https://github.com/redhat-raptor)
 - [ol-ko](https://github.com/ol-ko)
+- [severi](https://github.com/severi)
 
 Forked from the [**serverless-client-s3**](https://github.com/serverless/serverless-client-s3/)
