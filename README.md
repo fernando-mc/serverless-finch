@@ -306,7 +306,7 @@ custom:
     ...
 ```
 
-Enable server side encryption for the uploaded files.
+Enable server side encryption for the uploaded files. You can use `AES256` or `aws:kms`.
 
 [AWS Documentation](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingServerSideEncryption.html)
 
