@@ -3,3 +3,4 @@
 *.iml
 node_modules
 venv
+test/temp
