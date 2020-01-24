@@ -1,0 +1,21 @@
+service: serverless-finch-test
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  
+plugins:
+  - serverless-finch
+
+custom:
+  client:
+    - bucketName: BUCKET1
+      indexDocument: index.html
+      errorDocument: error.html
+    - bucketName: BUCKET2
+      indexDocument: index.html
+      errorDocument: error.html
+    - bucketName: BUCKET3
+      indexDocument: index.html
+      errorDocument: error.html
+

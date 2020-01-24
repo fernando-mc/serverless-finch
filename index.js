@@ -15,7 +15,9 @@ class Client {
   constructor(serverless, cliOptions) {
     this.error = serverless.classes.Error;
     this.serverless = serverless;
-    this.options = serverless.service.custom.client;
+
+    this.clientOptions = [].concat(serverless.service.custom.client).filter(c => c);
+
     this.cliOptions = cliOptions || {};
     this.aws = this.serverless.getProvider('aws');
 
@@ -31,6 +33,10 @@ class Client {
           remove: {
             usage: 'Removes deployed files and bucket',
             lifecycleEvents: ['remove']
+          },
+          diagnostics: {
+            usage: 'prints out diagnostics',
+            lifecycleEvents: ['diagnostics']
           }
         }
       }
@@ -41,31 +47,54 @@ class Client {
         serverless.cli.log(this.commands.client.usage);
       },
       'client:deploy:deploy': () => {
-        return this._processDeployment();
+        return this._processAllDeployments();
       },
       'client:remove:remove': () => {
-        return this._removeDeployedResources();
+        return this._removeAllDeployedResources();
+      },
+      'client:diagnostics:diagnostics': () => {
+        return this._printDiagnostics();
       }
     };
   }
 
-  _validateConfig() {
+  _printDiagnostics() {
+    this.serverless.cli.log(JSON.stringify(this.clientOptions));
+    this._validateAllConfigs();
+  }
+
+  _validateAllConfigs() {
+    const _validations = this.clientOptions.map(options => this._validateConfig(options));
+    return Promise.all(_validations);
+  }
+
+  _validateConfig(options) {
     try {
-      validateClient(this.serverless, this.options);
+      validateClient(this.serverless, options);
     } catch (e) {
-      return Promise.reject(`Serverless Finch configuration errors:\n- ${e.join('\n- ')}`);
+      return Promise.reject(
+        `Serverless Finch configuration errors:\n- ${[].concat(e).join('\n- ')}`
+      );
     }
     return Promise.resolve();
   }
 
-  _removeDeployedResources() {
+  _removeAllDeployedResources() {
+    const _resourceRemovals = this.clientOptions.map(options =>
+      this._removeDeployedResources(options)
+    );
+
+    return Promise.all(_resourceRemovals);
+  }
+
+  _removeDeployedResources(options) {
     let bucketName, manageResources, keyPrefix;
 
-    return this._validateConfig()
+    return this._validateConfig(options)
       .then(() => {
-        bucketName = this.options.bucketName;
-        keyPrefix = this.options.keyPrefix;
-        manageResources = this.options.manageResources;
+        bucketName = options.bucketName;
+        keyPrefix = options.keyPrefix;
+        manageResources = options.manageResources;
         return this.cliOptions.confirm === false
           ? true
           : new Confirm(`Are you sure you want to delete bucket '${bucketName}'?`).run();
@@ -117,7 +146,15 @@ class Client {
       });
   }
 
-  _processDeployment() {
+  _processAllDeployments() {
+    const _processedDeployments = this.clientOptions.map(options =>
+      this._processDeployment(options)
+    );
+
+    return Promise.all(_processedDeployments);
+  }
+
+  _processDeployment(options) {
     let region,
       distributionFolder,
       clientPath,
@@ -130,36 +167,39 @@ class Client {
       keyPrefix,
       sse,
       routingRules,
-      manageResources;
+      manageResources,
+      bucketPolicyFile;
 
-    return this._validateConfig()
+    return this._validateConfig(options)
       .then(() => {
         // region is set based on the following order of precedence:
         // If specified, the CLI option is used
         // If region is not specified via the CLI, we use the region option specified
         //   under custom/client in serverless.yml
         // Otherwise, use the Serverless region specified under provider in serverless.yml
+
         region =
           this.cliOptions.region ||
-          this.options.region ||
+          options.region ||
           (this.serverless.service &&
           this.serverless.service.provider &&
           this.serverless.service.provider.region
             ? this.serverless.service.provider.region
             : undefined);
 
-        distributionFolder = this.options.distributionFolder || path.join('client/dist');
+        distributionFolder = options.distributionFolder || path.join('client/dist');
         clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
-        bucketName = this.options.bucketName;
-        keyPrefix = this.options.keyPrefix;
-        sse = this.options.sse || null;
-        manageResources = this.options.manageResources;
-        headerSpec = this.options.objectHeaders;
-        orderSpec = this.options.uploadOrder;
-        indexDoc = this.options.indexDocument || 'index.html';
-        errorDoc = this.options.errorDocument || 'error.html';
-        redirectAllRequestsTo = this.options.redirectAllRequestsTo || null;
-        routingRules = this.options.routingRules || null;
+        bucketName = options.bucketName;
+        keyPrefix = options.keyPrefix;
+        sse = options.sse || null;
+        manageResources = options.manageResources;
+        headerSpec = options.objectHeaders;
+        orderSpec = options.uploadOrder;
+        indexDoc = options.indexDocument || 'index.html';
+        errorDoc = options.errorDocument || 'error.html';
+        redirectAllRequestsTo = options.redirectAllRequestsTo || null;
+        routingRules = options.routingRules || null;
+        bucketPolicyFile = options.bucketPolicyFile || null;
 
         const deployDescribe = ['This deployment will:'];
 
@@ -231,7 +271,6 @@ class Client {
                 return Promise.resolve();
               }
               this.serverless.cli.log(`Configuring policy for bucket...`);
-              const bucketPolicyFile = this.serverless.service.custom.client.bucketPolicyFile;
               const customPolicy =
                 bucketPolicyFile && JSON.parse(fs.readFileSync(bucketPolicyFile));
               return configure.configurePolicyForBucket(this.aws, bucketName, customPolicy);
