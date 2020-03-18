@@ -163,8 +163,6 @@ class Client {
         routingRules = this.options.routingRules || null;
         tags = this.options.tags || []
 
-        console.log(tags)
-
         const deployDescribe = ['This deployment will:'];
 
         if (this.cliOptions['delete-contents']) {
