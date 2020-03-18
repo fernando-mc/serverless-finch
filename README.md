@@ -76,6 +76,24 @@ Use this parameter to specify a unique name for the S3 bucket that your files wi
 
 ---
 
+**tags**
+
+_optional_, default: `none`
+
+```yaml
+custom:
+  client:
+    ...
+    tags:
+      tagKey: tagvalue
+      tagKey2: tagValue2
+    ...
+```
+
+Use this parameter to specify a list of tags as key:value pairs that will be assigned to your bucket.
+
+---
+
 **distributionFolder**
 
 _optional_, default: `client/dist`
