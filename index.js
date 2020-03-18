@@ -10,6 +10,8 @@ const configure = require('./lib/configure');
 const regionUrls = require('./lib/resources/awsRegionUrls');
 const uploadDirectory = require('./lib/upload');
 const validateClient = require('./lib/validate');
+const handleChildProcesses = require('./lib/utilities/handleChildProcesses');
+
 
 class Client {
   constructor(serverless, cliOptions) {
@@ -26,7 +28,7 @@ class Client {
         commands: {
           deploy: {
             usage: 'Deploy serverless client code',
-            lifecycleEvents: ['deploy']
+            lifecycleEvents: ['before','deploy','after']
           },
           remove: {
             usage: 'Removes deployed files and bucket',
@@ -40,8 +42,14 @@ class Client {
       'client:client': () => {
         serverless.cli.log(this.commands.client.usage);
       },
+      'client:deploy:before': () => {
+        return this._beforeProcessDeployment();
+      },
       'client:deploy:deploy': () => {
         return this._processDeployment();
+      },
+      'client:deploy:after': () => {
+        return this._afterProcessDeployment();
       },
       'client:remove:remove': () => {
         return this._removeDeployedResources();
@@ -268,7 +276,63 @@ class Client {
       .catch(error => {
         return Promise.reject(new this.error(error));
       });
-  }
+    }
+
+    _beforeProcessDeployment(){
+      let hooks;
+
+      return this._validateConfig().then(() => {
+        return this.cliOptions.confirm === false
+          ? true
+          : new Confirm('Do you want to call before deploy hooks?').run();
+      }).then(goOn => {
+        if(goOn){
+          hooks = this.options.preHooks || null;
+          if(hooks === null){
+            this.serverless.cli.log(`No Before Deploy Hooks to run...`);
+            return Promise.resolve();
+          }
+
+          this.serverless.cli.log(`Calling Before Deploy Hooks...`);
+          return handleChildProcesses(this.serverless, hooks)
+        }
+        this.serverless.cli.log('Before Deploy Hooks cancelled');
+        return Promise.resolve();
+        
+      })
+      .catch(error => {
+        return Promise.reject(new this.error(error));
+      });
+
+    }
+
+    _afterProcessDeployment(){
+      let hooks;
+
+      return this._validateConfig().then(() => {
+        return this.cliOptions.confirm === false
+          ? true
+          : new Confirm('Do you want to call before deploy hooks?').run();
+      }).then(goOn => {
+        if(goOn){
+          hooks = this.options.preHooks || null;
+          if(hooks === null){
+            this.serverless.cli.log(`No After Deploy Hooks to run...`);
+            return Promise.resolve();
+          }
+
+          this.serverless.cli.log(`Calling Before Deploy Hooks...`);
+          return handleChildProcesses(this.serverless, hooks)
+        }
+        this.serverless.cli.log('After Deploy Hooks cancelled');
+        return Promise.resolve();
+        
+      })
+      .catch(error => {
+        return Promise.reject(new this.error(error));
+      });
+
+    }
 }
 
 module.exports = Client;
