@@ -301,6 +301,7 @@ class Client {
       })
       .then(goOn => {
         if (goOn) {
+          const hooks = this.options.preHooks || null;
           this.serverless.cli.log(`Calling Before Deploy Hooks...`);
           return handleChildProcesses(this.serverless, hooks);
         }
@@ -330,6 +331,7 @@ class Client {
       })
       .then(goOn => {
         if (goOn) {
+          const hooks = this.options.postHooks || null;
           this.serverless.cli.log(`Calling After Deploy Hooks...`);
           return handleChildProcesses(this.serverless, hooks);
         }
