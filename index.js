@@ -242,7 +242,11 @@ class Client {
                 return Promise.resolve();
               }
               this.serverless.cli.log(`Configuring CORS for bucket...`);
-              return configure.configureCorsForBucket(this.aws, bucketName);
+              const bucketCorsFile = this.serverless.service.custom.client.bucketCorsFile;
+              const customCors =
+                bucketCorsFile && JSON.parse(fs.readFileSync(bucketCorsFile));
+
+              return configure.configureCorsForBucket(this.aws, bucketName, customCors);
             })
             .then(() => {
               this.serverless.cli.log(`Uploading client files to bucket...`);
