@@ -432,6 +432,12 @@ For guidelines on contributing to the project, please refer to our [Contributing
 
 ## Release Notes
 
+### v2.6.0
+
+- Fix bucket deletion when using the `keyPrefix` option - [Pull 102](https://github.com/fernando-mc/serverless-finch/pull/102) - [Joseph](https://github.com/josephnle)
+- Add new supported regions - [Pull 101](https://github.com/fernando-mc/serverless-finch/pull/101) - [Andreas Franzén](https://github.com/triptec)
+- Add support for tags - [Pull 96](https://github.com/fernando-mc/serverless-finch/pull/96) - [itsjesseyo](https://github.com/itsjesseyo)
+
 ### v2.5.0
 
 - Added the `sse` option to allow you to encrypt files with Server Side Encryption using `AES256` or `aws:kms` - [Pull 91](https://github.com/fernando-mc/serverless-finch/pull/91) - [Severi Haverila](https://github.com/severi)
@@ -493,5 +499,8 @@ For guidelines on contributing to the project, please refer to our [Contributing
 - [redhat-raptor](https://github.com/redhat-raptor)
 - [ol-ko](https://github.com/ol-ko)
 - [severi](https://github.com/severi)
+- [josephnle](https://github.com/josephnle)
+- [triptec](https://github.com/triptec)
+- [itsjesseyo](https://github.com/itsjesseyo)
 
 Forked from the [**serverless-client-s3**](https://github.com/serverless/serverless-client-s3/)
