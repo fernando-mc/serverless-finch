@@ -130,7 +130,8 @@ class Client {
       keyPrefix,
       sse,
       routingRules,
-      manageResources;
+      manageResources,
+      tags;
 
     return this._validateConfig()
       .then(() => {
@@ -160,6 +161,7 @@ class Client {
         errorDoc = this.options.errorDocument || 'error.html';
         redirectAllRequestsTo = this.options.redirectAllRequestsTo || null;
         routingRules = this.options.routingRules || null;
+        tags = this.options.tags || []
 
         const deployDescribe = ['This deployment will:'];
 
@@ -235,6 +237,14 @@ class Client {
               const customPolicy =
                 bucketPolicyFile && JSON.parse(fs.readFileSync(bucketPolicyFile));
               return configure.configurePolicyForBucket(this.aws, bucketName, customPolicy);
+            })
+            .then(() => {
+              if (tags.length === 0) {
+                this.serverless.cli.log(`Retaining existing tags...`);
+                return Promise.resolve();
+              }
+              this.serverless.cli.log(`Configuring tags for bucket...`);
+              return configure.configureTagsForBucket(this.aws, bucketName, tags);
             })
             .then(() => {
               if (this.cliOptions['cors-change'] === false || manageResources === false) {
