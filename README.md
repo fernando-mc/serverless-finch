@@ -330,6 +330,24 @@ Enable server side encryption for the uploaded files. You can use `AES256` or `a
 
 ---
 
+**transferAcceleration**
+
+_optional_, default `false`
+
+```yaml
+custom:
+  client:
+    ...
+    transferAcceleration: false
+    ...
+```
+
+Enable or disable Transfer Acceleration on the bucket, set to `true` or `false`.
+
+[AWS Documentation](https://docs.aws.amazon.com/AmazonS3/latest/dev/transfer-acceleration.html)
+
+---
+
 **manageResources**
 
 _optional_, default `true` (the plugin does manage your resources by default)
