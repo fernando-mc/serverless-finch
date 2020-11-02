@@ -211,6 +211,8 @@ Headers may be specified globally for all files in the bucket by adding a `name`
 
 Headers with more specificity will take precedence over more general ones. For instance, if 'Cache-Control' was set to 'max-age=100' in `ALL_OBJECTS` and to 'max-age=500' in `my/folder/`, the files in `my/folder/` would get a header of 'Cache-Control: max-age=500'.
 
+'Content-Type' is autmomatically inferred from the file extension and added to the header collection. If the file is compressed and has the additional extension `.gz` or `br`, a 'Content-Encoding' header will be added as well to describe the object as gzip or brotli encoded.
+
 ---
 
 **redirectAllRequestsTo**
