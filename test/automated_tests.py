@@ -61,7 +61,7 @@ remove()
 os.system("cp ./config_files/routing-rules-redirect.yml ./serverless.yml")
 os.system("sls client deploy --no-confirm")
 result = s3.get_bucket_website(Bucket='BUCKET_NAME')
-if res['RoutingRules'][0]['ReplaceKeyWith'] != '':
+if res['RoutingRules'][0]["Redirect"]['ReplaceKeyWith'] != '':
     raise Exception("Isn't setting ReplaceKeyWith with an empty string")
 else:
     print("################## TEST5 PASSES########################")
