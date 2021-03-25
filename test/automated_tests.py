@@ -57,6 +57,16 @@ else:
     print("################## TEST4 PASSES########################")
 remove()
 
+# routing rules with "replaceKeyWith" se to empty string
+os.system("cp ./config_files/routing-rules-redirect.yml ./serverless.yml")
+os.system("sls client deploy --no-confirm")
+result = s3.get_bucket_website(Bucket='BUCKET_NAME')
+if res['RoutingRules'][0]['ReplaceKeyWith'] != '':
+    raise Exception("Isn't setting ReplaceKeyWith with an empty string")
+else:
+    print("################## TEST5 PASSES########################")
+remove()
+
 # Clean up node modules after all tests pass
 os.system("rm -r node_modules")
 os.system("rm ../serverless-finch-?*.?*.?*.tgz")
