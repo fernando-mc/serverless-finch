@@ -6,6 +6,11 @@
 
 A Serverless Framework plugin for deployment of static website assets of your Serverless project to AWS S3.
 
+## Patched version
+This package is a patched version of serverless-finch.
+The patch allows to set the "redirect" property of routing rules to be an empty string, which is a legitimate value.
+This package can be removed once the Pull Request has been accepted in the official serverless-finch package.
+
 ## Installation
 
 ```

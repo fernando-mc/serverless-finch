@@ -1,10 +1,10 @@
 {
-  "name": "serverless-finch",
-  "version": "2.6.0",
+  "name": "serverless-finch-patched-for-redirect",
+  "version": "2.6.3",
   "engines": {
     "node": ">=4.0"
   },
-  "description": "Deploy your serverless static website to AWS S3.",
+  "description": "Deploy your serverless static website to AWS S3. Based on serverless-finch 2.6.0. ",
   "main": "index.js",
   "scripts": {
     "precommit": "lint-staged",
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fernando-mc/serverless-finch.git"
+    "url": "git+https://github.com/EnricoPicci/serverless-finch.git"
   },
   "keywords": [
     "serverless",
