@@ -21,9 +21,11 @@ def assertfail(message):
     raise Exception(message)
 
 def teardown():
+
+    print("")
     print("  CLEANUP START")
     os.system("sls client remove --no-confirm")
-    print("          END")
+    print("  CLEANUP END")
 
 containing_dir = os.path.split(os.getcwd())[0]
 test_dir = os.path.join(os.getcwd(), 'test')
@@ -71,7 +73,7 @@ def func_original_config_tests():
       assertfail("Isn't setting headers correctly")
 
     testpass()
-    teardwon()
+    teardown()
 
     setup("Can set custom header with standard index and original configuration")
 
