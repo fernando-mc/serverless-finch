@@ -326,8 +326,19 @@ custom:
 
 This allows you to opt out of having serverless-finch create or configure the s3 bucket. Instead, you can rely on an existing bucket or a CloudFormation definition.
 
+### Multiple Buckets
 
+The default deployment is a single client distribution from the default location or as specified using your `distributionFolder`. It may however be a required to deploy a second site concurrently as a redirect with custom content. In that case the `client` can be specified as a yaml array:
 
+```yaml
+custom:
+  client:
+    - bucketName: my-bucket-main
+      ...
+    - bucketName: my-bucket-alternate
+      distributionFolder: alternate
+      ...
+```
 
 ### Command-line Parameters
 
