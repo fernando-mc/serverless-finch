@@ -168,7 +168,8 @@ class Client {
       sse,
       routingRules,
       manageResources,
-      bucketPolicyFile;
+      bucketPolicyFile,
+      tags;
 
     return this._validateConfig(options)
       .then(() => {
@@ -189,17 +190,18 @@ class Client {
 
         distributionFolder = options.distributionFolder || path.join('client/dist');
         clientPath = path.join(this.serverless.config.servicePath, distributionFolder);
-        bucketName = options.bucketName;
-        keyPrefix = options.keyPrefix;
-        sse = options.sse || null;
-        manageResources = options.manageResources;
-        headerSpec = options.objectHeaders;
-        orderSpec = options.uploadOrder;
-        indexDoc = options.indexDocument || 'index.html';
-        errorDoc = options.errorDocument || 'error.html';
-        redirectAllRequestsTo = options.redirectAllRequestsTo || null;
-        routingRules = options.routingRules || null;
-        bucketPolicyFile = options.bucketPolicyFile || null;
+        bucketName = this.options.bucketName;
+        keyPrefix = this.options.keyPrefix;
+        sse = this.options.sse || null;
+        manageResources = this.options.manageResources;
+        headerSpec = this.options.objectHeaders;
+        orderSpec = this.options.uploadOrder;
+        indexDoc = this.options.indexDocument || 'index.html';
+        errorDoc = this.options.errorDocument || 'error.html';
+        redirectAllRequestsTo = this.options.redirectAllRequestsTo || null;
+        routingRules = this.options.routingRules || null;
+        bucketPolicyFile = this.options.bucketPolicyFile || null;
+        tags = this.options.tags || []
 
         const deployDescribe = ['This deployment will:'];
 
@@ -274,6 +276,14 @@ class Client {
               const customPolicy =
                 bucketPolicyFile && JSON.parse(fs.readFileSync(bucketPolicyFile));
               return configure.configurePolicyForBucket(this.aws, bucketName, customPolicy);
+            })
+            .then(() => {
+              if (tags.length === 0) {
+                this.serverless.cli.log(`Retaining existing tags...`);
+                return Promise.resolve();
+              }
+              this.serverless.cli.log(`Configuring tags for bucket...`);
+              return configure.configureTagsForBucket(this.aws, bucketName, tags);
             })
             .then(() => {
               if (this.cliOptions['cors-change'] === false || manageResources === false) {
