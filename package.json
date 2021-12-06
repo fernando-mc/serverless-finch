@@ -1,6 +1,6 @@
 {
   "name": "serverless-finch",
-  "version": "2.6.0",
+  "version": "2.7.6",
   "engines": {
     "node": ">=4.0"
   },
@@ -8,8 +8,9 @@
   "main": "index.js",
   "scripts": {
     "precommit": "lint-staged",
-    "testsetup": "python3 -m venv test/venv && . test/venv/bin/activate && pip install -r test/requirements.txt",
-    "test": "npm run testsetup && python3 ./test/automated_tests.py"
+    "localtestsetup": "python3 -m venv test/venv && . test/venv/bin/activate && pip install -r test/requirements.txt",
+    "testlocal": "npm run localtestsetup && npm run test",
+    "test": "python3 ./test/automated_tests.py"
   },
   "lint-staged": {
     "**/*.{js,json}": [
