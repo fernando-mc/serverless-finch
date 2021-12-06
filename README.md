@@ -432,11 +432,12 @@ For guidelines on contributing to the project, please refer to our [Contributing
 
 ## Release Notes
 
-### v2.7.0
+### v2.7.6
 
 - Adds support for easier NPM deploys via GitHub releases
-- Allows to set the "redirect" property of routing rules to be an empty string, which is a legitimate value. [EnricoPicci](https://github.com/EnricoPicci)
-
+- Allows to set the "redirect" property of routing rules to be an empty string, which is a legitimate value. - [EnricoPicci](https://github.com/EnricoPicci)
+- Clearer details on where the plugin uploads files when key prefixed. [Lilja](https://github.com/Lilja)
+- Why 2.7.6 you ask? Because there were a lot of CI tests that made this release happen. 
 
 ### v2.6.0
 
