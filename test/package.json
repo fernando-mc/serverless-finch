@@ -5,6 +5,6 @@
     "node": ">=4.0"
   },
   "dependencies": {
-    "serverless-finch": "file:../serverless-finch-2.6.0.tgz"
+    "serverless-finch": "file:../serverless-finch-2.7.6.tgz"
   }
 }

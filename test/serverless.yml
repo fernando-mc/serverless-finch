@@ -9,10 +9,6 @@ plugins:
 
 custom:
   client:
-    bucketName: sls-finch-test-objhdrs-stndrd-fer123
+    bucketName: sls-finch-test-stndrd-use1-v3
     indexDocument: index.html
     errorDocument: error.html
-    objectHeaders: 
-      ALL_OBJECTS:
-        - name: Cache-Control
-          value: max-age=5
