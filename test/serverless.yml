@@ -9,7 +9,7 @@ plugins:
 
 custom:
   client:
-    bucketName: sls-finch-test-objhdrs-stndrd-fer
+    bucketName: sls-finch-test-objhdrs-stndrd-fer123
     indexDocument: index.html
     errorDocument: error.html
     objectHeaders: 

@@ -50,7 +50,7 @@ remove()
 # custom headers test with standard index
 os.system("cp ./config_files/obj-headers-standard-index.yml ./serverless.yml")
 os.system("sls client deploy --no-confirm")
-res = s3.head_object(Bucket="sls-finch-test-objhdrs-stndrd-fer", Key="index.html")
+res = s3.head_object(Bucket="sls-finch-test-objhdrs-stndrd-fer123", Key="index.html")
 if res['CacheControl'] != 'max-age=5':
     raise Exception("Isn't setting headers correctly with standard index")
 else:
