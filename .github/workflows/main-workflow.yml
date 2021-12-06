@@ -1,0 +1,26 @@
+name: Main Workflow
+on:
+  push:
+    branches:
+      - 'master'
+  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - uses: actions/setup-python@v2
+        with: 
+          python-version: '3.8'
+      - run: pip install -r test/requirements.txt
+      - run: npm ci
+      - run: npm test
