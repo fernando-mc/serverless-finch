@@ -131,7 +131,8 @@ class Client {
       sse,
       routingRules,
       manageResources,
-      tags;
+      tags,
+      prefixText;
 
     return this._validateConfig()
       .then(() => {
@@ -163,13 +164,17 @@ class Client {
         routingRules = this.options.routingRules || null;
         tags = this.options.tags || []
 
+        if(keyPrefix) {
+            prefixText = `under the prefix '${keyPrefix}'`
+        }
+
         const deployDescribe = ['This deployment will:'];
 
         if (this.cliOptions['delete-contents']) {
           deployDescribe.push(`- Remove all existing files from bucket '${bucketName}'`);
         }
         deployDescribe.push(
-          `- Upload all files from '${distributionFolder}' to bucket '${bucketName}'`
+          `- Upload all files from '${distributionFolder}' to bucket '${bucketName}' ${prefixText}`
         );
 
         if (this.cliOptions['config-change'] !== false && manageResources !== false) {
