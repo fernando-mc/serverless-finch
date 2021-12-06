@@ -509,5 +509,6 @@ For guidelines on contributing to the project, please refer to our [Contributing
 - [triptec](https://github.com/triptec)
 - [itsjesseyo](https://github.com/itsjesseyo)
 - [EnricoPicci](https://github.com/EnricoPicci)
+- [Lilja](https://github.com/Lilja)
 
 Forked from the [**serverless-client-s3**](https://github.com/serverless/serverless-client-s3/)
