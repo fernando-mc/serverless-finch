@@ -432,6 +432,12 @@ For guidelines on contributing to the project, please refer to our [Contributing
 
 ## Release Notes
 
+### v2.7.0
+
+- Adds support for easier NPM deploys via GitHub releases
+- Allows to set the "redirect" property of routing rules to be an empty string, which is a legitimate value. [EnricoPicci](https://github.com/EnricoPicci)
+
+
 ### v2.6.0
 
 - Fix bucket deletion when using the `keyPrefix` option - [Pull 102](https://github.com/fernando-mc/serverless-finch/pull/102) - [Joseph](https://github.com/josephnle)
@@ -502,5 +508,6 @@ For guidelines on contributing to the project, please refer to our [Contributing
 - [josephnle](https://github.com/josephnle)
 - [triptec](https://github.com/triptec)
 - [itsjesseyo](https://github.com/itsjesseyo)
+- [EnricoPicci](https://github.com/EnricoPicci)
 
 Forked from the [**serverless-client-s3**](https://github.com/serverless/serverless-client-s3/)

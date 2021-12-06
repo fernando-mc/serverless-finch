@@ -9,10 +9,10 @@ plugins:
 
 custom:
   client:
-    bucketName: sls-finch-test-objhdrs-stndrd-fer123
+    bucketName: sls-finch-test-routing-use1
     indexDocument: index.html
     errorDocument: error.html
-    objectHeaders: 
-      ALL_OBJECTS:
-        - name: Cache-Control
-          value: max-age=5
+    routingRules:
+      - redirect: { replaceKeyWith: "" }
+        condition:
+          httpErrorCodeReturnedEquals: 404
