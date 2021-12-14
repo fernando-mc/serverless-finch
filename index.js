@@ -3,7 +3,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const Confirm = require('prompt-confirm');
+const Confirm = require('enquirer');
 
 const bucketUtils = require('./lib/bucketUtils');
 const configure = require('./lib/configure');
@@ -162,10 +162,10 @@ class Client {
         errorDoc = this.options.errorDocument || 'error.html';
         redirectAllRequestsTo = this.options.redirectAllRequestsTo || null;
         routingRules = this.options.routingRules || null;
-        tags = this.options.tags || []
+        tags = this.options.tags || [];
 
-        if(keyPrefix) {
-            prefixText = `under the prefix '${keyPrefix}'`
+        if (keyPrefix) {
+          prefixText = `under the prefix '${keyPrefix}'`;
         }
 
         const deployDescribe = ['This deployment will:'];
@@ -273,7 +273,9 @@ class Client {
             })
             .then(() => {
               this.serverless.cli.log(
-                `Success! Your site should be available at http://${bucketName}.${regionUrls[region]}/`
+                `Success! Your site should be available at http://${bucketName}.${
+                  regionUrls[region]
+                }/`
               );
             });
         }
