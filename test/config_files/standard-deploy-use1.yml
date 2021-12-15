@@ -2,7 +2,7 @@ service: serverless-finch-test
 
 provider:
   name: aws
-  runtime: nodejs6.10
+  runtime: nodejs14.x
 
 plugins:
   - serverless-finch
