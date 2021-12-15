@@ -9,7 +9,7 @@ plugins:
 
 custom:
   client:
-    bucketName: sls-finch-test-routing-use1
+    bucketName: sls-finch-test-routing-use1-test-v2
     indexDocument: index.html
     errorDocument: error.html
     routingRules:

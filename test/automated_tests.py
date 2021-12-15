@@ -60,7 +60,7 @@ remove()
 # routing rules with "replaceKeyWith" se to empty string
 os.system("cp ./config_files/routing-rules-redirect.yml ./serverless.yml")
 os.system("sls client deploy --no-confirm")
-res = s3.get_bucket_website(Bucket='sls-finch-test-routing-use1')
+res = s3.get_bucket_website(Bucket='sls-finch-test-routing-use1-test-v2')
 if res['RoutingRules'][0]["Redirect"]['ReplaceKeyWith'] != '':
     raise Exception("Isn't setting ReplaceKeyWith with an empty string")
 else:
