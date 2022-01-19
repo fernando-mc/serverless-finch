@@ -1,0 +1,38 @@
+# serverless.yml
+# cccouncilpublicwebsite.tk
+
+service: publicwebsite
+app: cccouncil
+#org: srvlessfwrk
+org: johnzoet
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  stage: dev
+  region: ap-southeast-2
+
+package:
+  exclude:
+    - node_modules/**
+    - backend/frontend/**
+    - backend/venv/**
+    - backend/.vscode/**
+    - backend/__pycache__/**
+    - backend/.dynamodb/**
+    - ops/**    
+    - .serverless/**
+    - package-lock.json
+    - .DS_Store
+
+custom:
+  client:
+    #bucketName: cccouncilpublicwebsite.tk
+    bucketName: cccouncilpublicwebsite.aws.zoetebier.net
+    distributionFolder: frontend
+    indexDocument: index.html
+    errorDocument: error.html
+
+plugins:
+  - serverless-finch

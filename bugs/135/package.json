@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "enquirer": "^2.3.6",
+    "serverless-finch": "^2.8.0"
+  }
+}

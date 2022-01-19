@@ -3,7 +3,8 @@
 const path = require('path');
 const fs = require('fs');
 
-const Confirm = require('enquirer');
+// Added braces to Confirm to get it working with command: serverless client deploy
+const { Confirm } = require('enquirer');
 
 const bucketUtils = require('./lib/bucketUtils');
 const configure = require('./lib/configure');
