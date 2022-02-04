@@ -26,11 +26,43 @@ class Client {
         commands: {
           deploy: {
             usage: 'Deploy serverless client code',
-            lifecycleEvents: ['deploy']
+            lifecycleEvents: ['deploy'],
+            options: {
+              region: {
+                usage: 'Specify what AWS region the bucket will be deployed in',
+                type: 'string'
+              },
+              'delete-contents': {
+                usage: 'Delete the bucket contents before deployment',
+                type: 'boolean'
+              },
+              'config-change': {
+                usage: 'Overwrite the bucket configuration',
+                type: 'boolean'
+              },
+              'policy-change': {
+                usage: 'Overwrite the bucket policy',
+                type: 'boolean'
+              },
+              'cors-change': {
+                usage: 'Overwrite the bucket CORS configuration',
+                type: 'boolean'
+              },
+              confirm: {
+                usage: 'Display a confirmation prompt',
+                type: 'boolean'
+              }
+            }
           },
           remove: {
             usage: 'Removes deployed files and bucket',
-            lifecycleEvents: ['remove']
+            lifecycleEvents: ['remove'],
+            options: {
+              confirm: {
+                usage: 'Display a confirmation prompt',
+                type: 'boolean'
+              }
+            }
           }
         }
       }
