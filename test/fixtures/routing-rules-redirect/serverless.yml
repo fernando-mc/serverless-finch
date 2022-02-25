@@ -1,0 +1,13 @@
+service: service
+provider: aws
+
+plugins:
+  - serverless-finch
+
+custom:
+  client:
+    bucketName: my-website-bucket
+    routingRules:
+      - redirect: { replaceKeyWith: "" }
+        condition:
+          httpErrorCodeReturnedEquals: 404

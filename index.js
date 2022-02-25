@@ -3,7 +3,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const Confirm = require('enquirer');
+const confirm = require('@serverless/utils/inquirer/confirm');
 
 const bucketUtils = require('./lib/bucketUtils');
 const configure = require('./lib/configure');
@@ -100,7 +100,7 @@ class Client {
         manageResources = this.options.manageResources;
         return this.cliOptions.confirm === false
           ? true
-          : new Confirm(`Are you sure you want to delete bucket '${bucketName}'?`).run();
+          : confirm(`Are you sure you want to delete bucket '${bucketName}'?`);
       })
       .then(goOn => {
         if (goOn) {
@@ -220,9 +220,7 @@ class Client {
         }
 
         deployDescribe.forEach(m => this.serverless.cli.log(m));
-        return this.cliOptions.confirm === false
-          ? true
-          : new Confirm(`Do you want to proceed?`).run();
+        return this.cliOptions.confirm === false ? true : confirm(`Do you want to proceed?`);
       })
       .then(goOn => {
         if (goOn) {
@@ -305,9 +303,7 @@ class Client {
             })
             .then(() => {
               this.serverless.cli.log(
-                `Success! Your site should be available at http://${bucketName}.${
-                  regionUrls[region]
-                }/`
+                `Success! Your site should be available at http://${bucketName}.${regionUrls[region]}/`
               );
             });
         }

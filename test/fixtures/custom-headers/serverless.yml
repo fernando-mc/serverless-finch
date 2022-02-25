@@ -1,0 +1,13 @@
+service: service
+provider: aws
+
+plugins:
+  - serverless-finch
+
+custom:
+  client:
+    bucketName: my-website-bucket
+    objectHeaders: 
+      index.html:
+        - name: Cache-Control
+          value: max-age=5
