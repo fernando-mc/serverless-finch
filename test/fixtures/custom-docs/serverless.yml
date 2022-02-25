@@ -1,15 +1,12 @@
-service: serverless-finch-test
-
-provider:
-  name: aws
-  runtime: nodejs14.x
+service: service
+provider: aws
 
 plugins:
   - serverless-finch
 
 custom:
   client:
-    bucketName: sls-finch-test-custom-index-use1-testv2
+    bucketName: my-website-bucket
     distributionFolder: website
     indexDocument: home.html
     errorDocument: 404.html

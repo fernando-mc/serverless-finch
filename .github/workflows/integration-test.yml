@@ -1,13 +1,15 @@
-name: Main Workflow
+name: Run integration tests
+
 on:
   push:
     branches:
-      - 'master'
-  
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SERVERLESS_VERSION: '3.3.0'
     steps:
       - uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -18,9 +20,5 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 16
-      - uses: actions/setup-python@v2
-        with: 
-          python-version: '3.8'
-      - run: pip install -r test/requirements.txt
       - run: npm ci
-      - run: npm test
+      - run: npm run integration-test

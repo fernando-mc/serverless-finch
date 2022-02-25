@@ -1,20 +1,39 @@
-## Setup for tests
+# Testing
 
-Tests are currently just a Python script that runs a few common use cases and checks the deployment by using the reqeusts library against the deployment location. This requires the following prerequisites:
+Tests use the [Mocha](https://mochajs.org) test framework. 
 
-1. You have Python3 and pip installed
-2. You have npm and node installed
-3. You have the Serverless Framework setup globally
-4. You're using a unixy OS
+Tests are configured with the [runServerless](https://github.com/serverless/test/blob/main/docs/run-serverless.md#run-serverless) util so that they reflect real world usage.
 
-After you install python3 you can run the following commands within the `test` directory:
-1. python3 -m venv venv
-2. source venv/bin/activate
-3. pip install -r requirements.txt
+## Unit tests
 
-## Running tests
+Run all unit tests:
 
-1. You will need to clone the repository and then switch to the branch for the PR in question
-2. When on the PR branch (with all the new goodies that might break something) you can run the `test/automated_tests.py` file with python3 or just run `npm test`
+```
+npm test
+```
 
-If the tests run at all without seeing Serverless Framework errors than you should have feedback as to if the tests pass from the results of `npm test`.
+## AWS integration tests
+
+Run all integration tests:
+
+```
+AWS_ACCESS_KEY_ID=XXX AWS_SECRET_ACCESS_KEY=xxx npm run integration-test
+```
+
+*Note: relying on AWS_PROFILE won't work because home folder is mocked for test runs.*
+
+Run a specific integration test:
+
+```
+AWS_ACCESS_KEY_ID=XXX AWS_SECRET_ACCESS_KEY=xxx npx mocha test/integration/{chosen}.test.js
+```
+
+S3 buckets created during testing are prefixed with `serverless-finch-test`. They should be automatically deleted on test completion.
+
+Ideally any feature that integrates with AWS functionality should be backed by integration tests.
+
+
+## References
+
+- [@serverless/serverless testing guidelines](https://github.com/serverless/serverless/tree/main/test#readme)
+- [@serverless/test](https://github.com/serverless/test)
