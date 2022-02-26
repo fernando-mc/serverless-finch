@@ -432,6 +432,11 @@ For guidelines on contributing to the project, please refer to our [Contributing
 
 ## Release Notes
 
+### v3.0.0
+
+- Serverless 3 compatibility
+- Updated dependencies
+
 ### v2.8.0
 
 - Adds a lot of patches and fixes from old deps to new ones.
@@ -515,5 +520,7 @@ For guidelines on contributing to the project, please refer to our [Contributing
 - [itsjesseyo](https://github.com/itsjesseyo)
 - [EnricoPicci](https://github.com/EnricoPicci)
 - [Lilja](https://github.com/Lilja)
+- [mikejpeters](https://github.com/mikejpeters)
+- [Shereef](https://github.com/Shereef)
 
 Forked from the [**serverless-client-s3**](https://github.com/serverless/serverless-client-s3/)
