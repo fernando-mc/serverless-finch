@@ -435,10 +435,7 @@ For guidelines on contributing to the project, please refer to our [Contributing
 ### v3.0.0
 
 - Serverless 3 compatibility
-- Test improvlements (splitting unit tests and integration tests)
-  - Tests to run on PRs and integration tests to run on master merge
-- Added workflows for releasing to npm
-- Updated all updatable dependencies
+- Updated dependencies
 
 ### v2.8.0
 
