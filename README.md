@@ -515,5 +515,7 @@ For guidelines on contributing to the project, please refer to our [Contributing
 - [itsjesseyo](https://github.com/itsjesseyo)
 - [EnricoPicci](https://github.com/EnricoPicci)
 - [Lilja](https://github.com/Lilja)
+- [mikejpeters](https://github.com/mikejpeters)
+- [Shereef](https://github.com/Shereef)
 
 Forked from the [**serverless-client-s3**](https://github.com/serverless/serverless-client-s3/)
