@@ -41,11 +41,14 @@
     "minimatch": "^5.0.1"
   },
   "devDependencies": {
+    "@commitlint/cli": "^16.2.1",
+    "@commitlint/config-conventional": "^16.2.1",
+    "@commitlint/cz-commitlint": "^16.2.1",
     "@serverless/test": "^10.0.1",
     "aws-sdk": "^2.1082.0",
     "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
-    "cz-conventional-changelog": "^3.3.0",
+    "commitizen": "^4.2.4",
     "fs-extra": "^10.0.1",
     "husky": "^7.0.4",
     "lint-staged": "^12.3.4",
