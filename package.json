@@ -7,14 +7,9 @@
   "description": "Deploy your serverless static website to AWS S3.",
   "main": "index.js",
   "scripts": {
-    "precommit": "lint-staged",
+    "prepare": "husky install",
     "test": "mocha \"test/unit/**/*.test.js\"",
     "integration-test": "mocha-isolated --pass-through-aws-creds \"test/integration/**/*.test.js\""
-  },
-  "lint-staged": {
-    "**/*.{js,json}": [
-      "prettier --write"
-    ]
   },
   "repository": {
     "type": "git",
@@ -39,16 +34,6 @@
     "url": "https://github.com/fernando-mc/serverless-finch/issues"
   },
   "homepage": "https://github.com/fernando-mc/serverless-finch#readme",
-  "mocha": {
-    "require": [
-      "@serverless/test/setup/patch",
-      "@serverless/test/setup/log",
-      "@serverless/test/setup/mock-homedir",
-      "@serverless/test/setup/mock-cwd",
-      "@serverless/test/setup/restore-env"
-    ],
-    "timeout": 360000
-  },
   "dependencies": {
     "@serverless/utils": "^6.0.2",
     "is_js": "^0.9.0",
