@@ -161,6 +161,7 @@ class Client {
       redirectAllRequestsTo,
       keyPrefix,
       sse,
+      transferAcceleration,
       routingRules,
       manageResources,
       tags,
@@ -187,6 +188,7 @@ class Client {
         bucketName = this.options.bucketName;
         keyPrefix = this.options.keyPrefix;
         sse = this.options.sse || null;
+        transferAcceleration = this.options.transferAcceleration || false;
         manageResources = this.options.manageResources;
         headerSpec = this.options.objectHeaders;
         orderSpec = this.options.uploadOrder;
@@ -288,6 +290,14 @@ class Client {
               }
               this.serverless.cli.log(`Configuring CORS for bucket...`);
               return configure.configureCorsForBucket(this.aws, bucketName);
+            })
+            .then(() => {
+              if (this.cliOptions['config-change'] === false || manageResources === false) {
+                this.serverless.cli.log(`Retaining existing bucket Transfer Acceleration configuration...`);
+                return Promise.resolve();
+              }
+              this.serverless.cli.log(`Configuring Transfer Acceleration for bucket...`);
+              return configure.configureTransferAccelerationForBucket(this.aws, bucketName, transferAcceleration);
             })
             .then(() => {
               this.serverless.cli.log(`Uploading client files to bucket...`);
