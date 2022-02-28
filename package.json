@@ -9,6 +9,7 @@
   "scripts": {
     "prepare": "husky install",
     "test": "mocha \"test/unit/**/*.test.js\"",
+    "coverage": "nyc npm run test",
     "integration-test": "mocha-isolated --pass-through-aws-creds \"test/integration/**/*.test.js\""
   },
   "repository": {
@@ -56,6 +57,7 @@
     "memoizee": "^0.4.15",
     "mocha": "^9.2.1",
     "node-fetch": "^2.6.7",
+    "nyc": "^15.1.0",
     "prettier": "^2.5.1",
     "serverless": "^3.4.0",
     "sinon": "^13.0.1",

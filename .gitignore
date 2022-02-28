@@ -1,6 +1,8 @@
 .idea/
+.nyc_output/
 .vscode/
 *.swp
 *.iml
+coverage/
 node_modules
 venv
