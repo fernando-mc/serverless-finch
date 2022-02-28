@@ -93,12 +93,22 @@ describe('client deploy', () => {
     });
   });
 
-  it('should not create the bucket if it already exists', async () => {
+  it('should not create the bucket if bucket already exists', async () => {
     configureInquirerStub(inquirer, { confirm: { isConfirmed: true } });
 
     await deploy('existing-bucket');
 
     expect(createBucketStub).not.to.be.called;
+  });
+
+  it('should still set the bucket config & policies if bucket already exists', async () => {
+    configureInquirerStub(inquirer, { confirm: { isConfirmed: true } });
+
+    await deploy('existing-bucket');
+
+    expect(putBucketCorsStub).to.be.called;
+    expect(putBucketPolicyStub).to.be.called;
+    expect(putBucketWebsiteStub).to.be.called;
   });
 
   it('delete objects in the bucket if it already exists', async () => {
@@ -192,14 +202,41 @@ describe('client deploy', () => {
     expect(putObjectStub).not.to.be.called;
   });
 
-  it('should deploy without user confirmation if `confirm` option is set to false', async () => {
-    configureInquirerStub(inquirer, { confirm: { isConfirmed: false } });
+  describe('command line options', () => {
+    it('--no-delete-contents should skip deleting existing objects', async () => {
+      configureInquirerStub(inquirer, { confirm: { isConfirmed: true } });
 
-    await deploy('basic', { confirm: false });
-    expect(putBucketCorsStub).to.be.called;
-    expect(putBucketPolicyStub).to.be.called;
-    expect(putBucketWebsiteStub).to.be.called;
-    expect(putObjectStub).to.be.called;
+      await deploy('existing-bucket', { 'delete-contents': false });
+      expect(deleteObjectsStub).not.to.be.called;
+    });
+
+    it('--no-config-change should skip bucket website configuration', async () => {
+      configureInquirerStub(inquirer, { confirm: { isConfirmed: true } });
+
+      await deploy('existing-bucket', { 'config-change': false });
+      expect(putBucketWebsiteStub).not.to.be.called;
+    });
+
+    it('--no-policy-change should skip bucket policy configuration', async () => {
+      configureInquirerStub(inquirer, { confirm: { isConfirmed: true } });
+
+      await deploy('existing-bucket', { 'policy-change': false });
+      expect(putBucketPolicyStub).not.to.be.called;
+    });
+
+    it('--no-cors-change should skip bucket CORS configuration', async () => {
+      configureInquirerStub(inquirer, { confirm: { isConfirmed: true } });
+
+      await deploy('existing-bucket', { 'cors-change': false });
+      expect(putBucketCorsStub).not.to.be.called;
+    });
+
+    it('--no-confirm should skip user confirmation', async () => {
+      configureInquirerStub(inquirer, { confirm: { isConfirmed: false } });
+
+      await deploy('basic', { confirm: false });
+      expect(putObjectStub).to.be.called;
+    });
   });
 
   function deploy(fixture, options) {
