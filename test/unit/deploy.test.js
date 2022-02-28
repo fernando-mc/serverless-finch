@@ -16,6 +16,7 @@ describe('client deploy', () => {
   let createBucketStub;
   let putBucketCorsStub;
   let putBucketPolicyStub;
+  let putBucketTaggingStub;
   let putBucketWebsiteStub;
   let putObjectStub;
 
@@ -150,6 +151,23 @@ describe('client deploy', () => {
     });
   });
 
+  it('should set bucket tags', async () => {
+    configureInquirerStub(inquirer, { confirm: { isConfirmed: true } });
+
+    await deploy('tags');
+
+    expect(putBucketTaggingStub).to.be.calledOnce;
+    expect(putBucketTaggingStub).to.be.calledWithExactly({
+      Bucket: 'my-website-bucket',
+      Tagging: {
+        TagSet: [
+          { Key: 'tagKey', Value: 'tagvalue' },
+          { Key: 'tagKey2', Value: 'tagValue2' }
+        ]
+      }
+    });
+  });
+
   it('should not deploy without user confirmation', async () => {
     configureInquirerStub(inquirer, { confirm: { isConfirmed: false } });
 
@@ -175,6 +193,7 @@ describe('client deploy', () => {
     createBucketStub = sinon.stub();
     putBucketCorsStub = sinon.stub();
     putBucketPolicyStub = sinon.stub();
+    putBucketTaggingStub = sinon.stub();
     putBucketWebsiteStub = sinon.stub();
     putObjectStub = sinon.stub();
 
@@ -193,6 +212,7 @@ describe('client deploy', () => {
           },
           putBucketCors: putBucketCorsStub,
           putBucketPolicy: putBucketPolicyStub,
+          putBucketTagging: putBucketTaggingStub,
           putBucketWebsite: putBucketWebsiteStub,
           putObject: putObjectStub
         }
