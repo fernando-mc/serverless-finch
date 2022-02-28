@@ -13,6 +13,7 @@ chai.use(require('sinon-chai'));
 const { expect } = require('chai');
 
 describe('client deploy', () => {
+  let createBucketStub;
   let putBucketCorsStub;
   let putBucketPolicyStub;
   let putBucketWebsiteStub;
@@ -23,6 +24,13 @@ describe('client deploy', () => {
       configureInquirerStub(inquirer, { confirm: { isConfirmed: true } });
 
       await deploy('basic');
+    });
+
+    it('should create the bucket', async () => {
+      expect(createBucketStub).to.be.calledOnce;
+      expect(createBucketStub).to.be.calledWithExactly({
+        Bucket: 'my-website-bucket'
+      });
     });
 
     it('should set bucket website configuration', async () => {
@@ -81,6 +89,14 @@ describe('client deploy', () => {
         ContentType: 'text/html'
       });
     });
+  });
+
+  it('should not create the bucket if it already exists', async () => {
+    configureInquirerStub(inquirer, { confirm: { isConfirmed: true } });
+
+    await deploy('existing-bucket');
+
+    expect(createBucketStub).not.to.be.called;
   });
 
   it('should upload files according to custom doc config', async () => {
@@ -156,6 +172,7 @@ describe('client deploy', () => {
   });
 
   function deploy(fixture, options) {
+    createBucketStub = sinon.stub();
     putBucketCorsStub = sinon.stub();
     putBucketPolicyStub = sinon.stub();
     putBucketWebsiteStub = sinon.stub();
@@ -167,8 +184,9 @@ describe('client deploy', () => {
       options,
       awsRequestStubMap: {
         S3: {
+          createBucket: createBucketStub,
           listBuckets: {
-            Buckets: [{ Name: 'my-website-bucket' }]
+            Buckets: [{ Name: 'existing-bucket' }]
           },
           listObjectsV2: {
             Contents: []
