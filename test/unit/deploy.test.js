@@ -14,6 +14,7 @@ const { expect } = require('chai');
 
 describe('client deploy', () => {
   let createBucketStub;
+  let deleteObjectsStub;
   let putBucketCorsStub;
   let putBucketPolicyStub;
   let putBucketTaggingStub;
@@ -98,6 +99,18 @@ describe('client deploy', () => {
     await deploy('existing-bucket');
 
     expect(createBucketStub).not.to.be.called;
+  });
+
+  it('delete objects in the bucket if it already exists', async () => {
+    configureInquirerStub(inquirer, { confirm: { isConfirmed: true } });
+
+    await deploy('existing-bucket');
+
+    expect(deleteObjectsStub).to.be.calledOnce;
+    expect(deleteObjectsStub).to.be.calledWithExactly({
+      Bucket: 'existing-bucket',
+      Delete: { Objects: [{ Key: 'existing-file-1' }, { Key: 'existing-file-2' }] }
+    });
   });
 
   it('should upload files according to custom doc config', async () => {
@@ -191,6 +204,7 @@ describe('client deploy', () => {
 
   function deploy(fixture, options) {
     createBucketStub = sinon.stub();
+    deleteObjectsStub = sinon.stub();
     putBucketCorsStub = sinon.stub();
     putBucketPolicyStub = sinon.stub();
     putBucketTaggingStub = sinon.stub();
@@ -204,11 +218,12 @@ describe('client deploy', () => {
       awsRequestStubMap: {
         S3: {
           createBucket: createBucketStub,
+          deleteObjects: deleteObjectsStub,
           listBuckets: {
             Buckets: [{ Name: 'existing-bucket' }]
           },
           listObjectsV2: {
-            Contents: []
+            Contents: [{ Key: 'existing-file-1' }, { Key: 'existing-file-2' }]
           },
           putBucketCors: putBucketCorsStub,
           putBucketPolicy: putBucketPolicyStub,
