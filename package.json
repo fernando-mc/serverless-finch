@@ -5,10 +5,10 @@
     "node": ">=14.15.5"
   },
   "description": "Deploy your serverless static website to AWS S3.",
-  "main": "index.js",
+  "main": "lib/plugin.js",
   "scripts": {
     "prepare": "husky install",
-    "test": "mocha \"test/unit/**/*.test.js\"",
+    "test": "mocha \"lib/**/*.test.js\"",
     "coverage": "nyc npm run test",
     "integration-test": "mocha-isolated --pass-through-aws-creds \"test/integration/**/*.test.js\""
   },

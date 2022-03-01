@@ -1,6 +1,6 @@
 {
   "all": true,
-  "include": ["index.js", "lib/**/*.js"],
+  "include": ["lib/**/*.js"],
   "exclude": ["**/*.test.js"],
   "reporter": ["lcov", "html", "text-summary"]
 }
