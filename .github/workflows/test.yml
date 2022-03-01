@@ -19,5 +19,6 @@ jobs:
         with:
           node-version: 16
       - run: npm ci
+      - run: npm run lint
       - run: npm run coverage
       - uses: codecov/codecov-action@v2
