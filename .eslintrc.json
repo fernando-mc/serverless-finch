@@ -1,0 +1,19 @@
+{
+  "env": {
+    "node": true,
+    "es2020": true
+  },
+  "extends": ["eslint:recommended", "prettier"],
+  "rules": {
+    "no-var": "error",
+    "prefer-const": "error"
+  },
+  "overrides": [
+    {
+      "files": "**/*.test.js",
+      "env": {
+        "mocha": true
+      }
+    }
+  ]
+}

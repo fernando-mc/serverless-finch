@@ -8,6 +8,7 @@
   "main": "lib/plugin.js",
   "scripts": {
     "prepare": "husky install",
+    "lint": "eslint \"lib/**/*.js\" \"test/**/*.js\"",
     "test": "mocha \"lib/**/*.test.js\"",
     "coverage": "nyc npm run test",
     "integration-test": "mocha-isolated --pass-through-aws-creds \"test/integration/**/*.test.js\""
@@ -50,6 +51,8 @@
     "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
     "commitizen": "^4.2.4",
+    "eslint": "^8.10.0",
+    "eslint-config-prettier": "^8.4.0",
     "fs-extra": "^10.0.1",
     "husky": "^7.0.4",
     "lint-staged": "^12.3.4",
