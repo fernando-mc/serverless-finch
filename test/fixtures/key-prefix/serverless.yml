@@ -1,0 +1,11 @@
+service: service
+provider: aws
+
+plugins:
+  - serverless-finch
+
+custom:
+  client:
+    bucketName: my-website-bucket
+    keyPrefix: some-prefix
+  
