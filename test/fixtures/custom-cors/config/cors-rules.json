@@ -1,0 +1,8 @@
+[
+  {
+    "AllowedMethods": ["GET"],
+    "AllowedOrigins": ["https://example.com"],
+    "AllowedHeaders": ["*"],
+    "MaxAgeSeconds": 0
+  }
+]

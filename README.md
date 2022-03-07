@@ -176,6 +176,22 @@ custom:
 
 ---
 
+**corsFile**
+
+```yaml
+custom:
+  client:
+    ...
+    corsFile: path/to/cors.json
+    ...
+```
+
+Path to a JSON file defining the bucket [CORS configuration](https://docs.aws.amazon.com/AmazonS3/latest/userguide/ManageCorsUsing.html).
+If not set, it defaults to the configuration defined [here](./lib/resources/cors-rules.json).
+_See above docs on `bucketPolicyFile` option for how to provide a dynamic file path._
+
+---
+
 **objectHeaders** 
 
 _optional_, no default
