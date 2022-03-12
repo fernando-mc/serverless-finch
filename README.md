@@ -445,7 +445,56 @@ Please read our [contribution guide](./CONTRIBUTING.md).
 
 ## Release Notes
 
-See [Releases](https://github.com/fernando-mc/serverless-finch/releases).
+See [Releases](https://github.com/fernando-mc/serverless-finch/releases) for releases after `v2.6.0`.
+
+### v2.6.0
+
+- Fix bucket deletion when using the `keyPrefix` option - [Pull 102](https://github.com/fernando-mc/serverless-finch/pull/102) - [Joseph](https://github.com/josephnle)
+- Add new supported regions - [Pull 101](https://github.com/fernando-mc/serverless-finch/pull/101) - [Andreas Franzén](https://github.com/triptec)
+- Add support for tags - [Pull 96](https://github.com/fernando-mc/serverless-finch/pull/96) - [itsjesseyo](https://github.com/itsjesseyo)
+
+### v2.5.0
+
+- Added the `sse` option to allow you to encrypt files with Server Side Encryption using `AES256` or `aws:kms` - [Pull 91](https://github.com/fernando-mc/serverless-finch/pull/91) - [Severi Haverila](https://github.com/severi)
+
+### v2.4.\*
+
+- Added the `manageResources` option to allow you to tell serverless-finch to not interact with your S3 bucket - [Pull 75](https://github.com/fernando-mc/serverless-finch/pull/75) - [sprockow](https://github.com/sprockow)
+- Added the `keyPrefix` option to enable working with S3 folders - [Pull 76](https://github.com/fernando-mc/serverless-finch/pull/76) - [Archanium](https://github.com/Archanium)
+- Fixed some testing instructions
+- Path resolution bugfix - [Olga Skurativska](https://github.com/ol-ko) - [Pull 87](https://github.com/fernando-mc/serverless-finch/pull/87)
+- Typo and legacy promise bugfixes - [Joel Van Horn](https://github.com/joelvh), [Raptor](https://github.com/redhat-raptor), [Frederik Ring](https://github.com/m90)
+
+### v2.0.\*
+
+- Added ability to deploy files in a specific order to maximize uptime - [Issue 63](https://github.com/fernando-mc/serverless-finch/issues/63) - [stefan-lz](https://github.com/stefan-lz)
+- Added Python tests of functionality to speed up development - [fernando-mc](https://github.com/fernando-mc)
+- Major refactor of entire codebase to move towards modularity and testability
+- Added the ability to set HTTP headers for objects in bucket ([Issue 24](https://github.com/fernando-mc/serverless-finch/issues/24))
+- Added the ability to set redirect and routing options for the website (Initially implemented in [Pull 23](https://github.com/fernando-mc/serverless-finch/pull/23))
+- Added command-line options to disable (Initially implemented in [Pull 28](https://github.com/fernando-mc/serverless-finch/pull/28/files)):
+  - Bucket contents being deleted before deployment
+  - Bucket configuration being overwritten on deployment
+  - Bucket policy being overwritten on deployment
+  - Bucket CORS configuration being overwritten on deployment
+- Added validation checks for all configuration options
+- Removed "stage" command-line option. It was not being used for anything
+
+### v1.4.\*
+
+- Added the ability to set custom index and error documents. ([Pull 20](https://github.com/fernando-mc/serverless-finch/pull/20) - [evanseeds](https://github.com/evanseeds))
+
+### v1.3.\*
+
+- Added the ability to set a `distributionFolder` configuration value. This enables you to upload your website files from a custom directory ([Pull 12](https://github.com/fernando-mc/serverless-finch/pull/12) - [pradel](https://github.com/pradel))
+- Updated the URL to the official static website endpoint URL ([Pull 13](https://github.com/fernando-mc/serverless-finch/pull/13) - [amsross](https://github.com/amsross))
+- Added a new AWS region ([Pull 14](https://github.com/fernando-mc/serverless-finch/pull/14) - [daguix](https://github.com/daguix))
+- Fixed an issue with resolving serverless variables ([Pull 18](https://github.com/fernando-mc/serverless-finch/pull/18) - [shentonfreude](https://github.com/shentonfreude))
+
+### v1.2.\*
+
+- Added the `remove` option to tear down what you deploy. ([Pull 10](https://github.com/fernando-mc/serverless-finch/pull/10) thanks to [redroot](https://github.com/redroot))
+- Fixed automated builds for the project (no functional differences)
 
 ## Contributors
 
