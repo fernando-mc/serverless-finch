@@ -308,7 +308,11 @@ custom:
     ...
 ```
 
-The `uploadOrder` option can be used for ordering the files uploaded to the bucket. When combined with `--no-delete-contents` this helps with 0 downtime, as we can make sure we upload any assets before serving the html files which need them.
+The `uploadOrder` option can be used to control the order that files are uploaded to the bucket.
+Each entry is evaluated as a case-insensitive regular expression.
+Unmatched files are uploaded first.
+
+When combined with `--no-delete-contents` this can help with zero downtime (e.g. by uploading assets before the html files that depend on them).
 
 ---
 
