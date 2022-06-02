@@ -1,6 +1,6 @@
 service: example-site
 
-frameworkVersion: "=1.26.0"
+frameworkVersion: '2 || 3'
 
 provider:
   name: aws
